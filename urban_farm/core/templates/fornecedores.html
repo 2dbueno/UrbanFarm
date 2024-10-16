@@ -5,6 +5,7 @@
 
 {% load static %}
 <link rel="stylesheet" href="{% static 'styles/fornecedores.css' %}">
+{% load custom_filters %}
 
 {% block header %}
 <header class="header">
@@ -29,7 +30,7 @@
         <tr>
             <td>{{ fornecedor.id }}</td>
             <td>{{ fornecedor.nome_fantasia }}</td>
-            <td>{{ fornecedor.cnpj }}</td>
+            <td>{{ fornecedor.cnpj|format_cnpj }}</td>
             <td class="{% if fornecedor.status %}ativo{% else %}inativo{% endif %}">{{ fornecedor.status|yesno:"ATIVO,INATIVO" }}</td>
         </tr>
         {% empty %}
@@ -45,6 +46,20 @@
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Cadastrar Fornecedor</h2>
+
+        <!-- Exibição de erros gerais do formulário -->
+        {% if form.errors or endereco_form.errors %}
+        <div class="error-message">
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    <li>{{ field }}: {{ errors|escape }}</li>
+                {% endfor %}
+                {% for field, errors in endereco_form.errors.items %}
+                    <li>{{ field }}: {{ errors|escape }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
 
         <form id="fornecedorForm" method="post">
             {% csrf_token %}

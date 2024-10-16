@@ -31,6 +31,7 @@ class Endereco(models.Model):
 
 class Fornecedor(models.Model):
     id = models.AutoField(primary_key=True)
+    # cnpj é CharField pois é mais facil validar e se deixar "IntegerField" ele remove 0 a esquerda
     cnpj = models.CharField(max_length=18, unique=True)
     status = models.BooleanField(default=True)
     razao_social = models.CharField(max_length=100)

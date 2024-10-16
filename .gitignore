@@ -19,6 +19,7 @@ venv/
 Thumbs.db
 .vscode/
 .idea/
+urbanfarm.code-workspace
 
 # Arquivos temporários e binários
 *.tmp
