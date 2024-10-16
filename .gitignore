@@ -1,0 +1,60 @@
+# .gitignore para o projeto Urban Farm
+
+# Ambientes Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+*.venv
+env/
+venv/
+
+# Logs
+*.log
+*.sql
+
+# Configurações de sistema e IDEs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Arquivos temporários e binários
+*.tmp
+*.bak
+*.swp
+*.swo
+*.tmp
+*.stackdump
+*.out
+
+# Diretórios de build e cache do Python
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# Configurações do Electron e pacotes de distribuição
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+output/
+
+# Diretórios de ambiente e configuração do SQL Server
+*.mdf
+*.ldf
+.sqlproj
+.vscode/
+
+# Arquivos e diretórios específicos do Django
+db.sqlite3
+media/
+staticfiles/
+*.pot
+
+# Chaves e credenciais
+secrets.json
+.env

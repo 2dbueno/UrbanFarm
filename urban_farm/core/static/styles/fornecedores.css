@@ -1,0 +1,137 @@
+/* Estilos para a página de fornecedores */
+.header {
+    background-color: var(--cor-secundaria);
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.header-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    margin-top: 10px;
+    padding: 8px;
+    font-size: 14px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.fornecedores-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.fornecedores-table th, .fornecedores-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    background-color: #f0f0f0;
+}
+
+.fornecedores-table th {
+    background-color: #ccc;
+    font-weight: bold;
+}
+
+.fornecedores-table tr + tr {
+    background-color: #f0f0f0;
+}
+
+.fornecedores-table tr:hover {
+    background-color: #e0e0e0;
+}
+
+.ativo {
+    color: green;
+}
+
+.inativo {
+    color: red;
+}
+
+/* Estilos para o modal */
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* Ajustar para centralizar melhor */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%; /* Aumentar a largura para acomodar os campos */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.form-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 10px; /* Adicionar espaçamento entre as células */
+    margin-top: 20px;
+}
+
+.form-table td {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.form-table td:nth-child(1) {
+    width: 30%;
+    font-weight: bold;
+}
+
+.form-table input[type="text"], .form-table input[type="email"], .form-table select {
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-table .submit-cell {
+    text-align: right;
+}
+
+button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}

@@ -1,0 +1,51 @@
+<!-- core/templates/base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Urban Farm{% endblock %}</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="{% static 'styles/base.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/fornecedores.css' %}">
+</head>
+<body>
+    <!-- Navegação Lateral -->
+    <nav class="sidebar">
+        <h2>Urban Farm </h2>
+        <h2><button id="theme-toggle" class="theme-toggle">Alterar tema 💡</button></h2>
+        <ul>
+            <li><a href="{% url 'core:monitoramento' %}">Monitoramento</a></li>
+            <li><a href="{% url 'core:fornecedores' %}">Fornecedores</a></li>
+            {% comment %} <li><a href="{% url 'core:reports' %}">Relatórios</a></li> {% endcomment %}
+            {% comment %} <li><a href="{% url 'core:settings' %}">Configurações</a></li> {% endcomment %}
+        </ul>
+    </nav>
+
+    <div class="main-content">
+
+        <header>
+            {% block header %}
+            <!-- Conteúdo do header será definido nas páginas filhas -->
+            {% endblock %}
+        </header>
+
+        <div class="content">
+            {% block content %}
+            <!-- Conteúdo será definido pelas páginas filhas -->
+            {% endblock %}
+        </div>
+    </div>
+
+    <!-- Bloco para scripts adicionais específicos -->
+    {% block additional_scripts %}
+        <script src="{% static 'scripts/dark-mode.js' %}"></script>
+        <script src="{% static 'scripts/nav-manager.js' %}"></script>
+    {% endblock %}
+</body>
+</html>

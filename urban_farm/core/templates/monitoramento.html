@@ -1,0 +1,46 @@
+<!-- core/templates/monitoramento.html -->
+{% extends "base.html" %}
+
+{% block title %}Monitoramento - Urban Farm{% endblock %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static '/styles/monitoramento.css' %}">
+<script src="{% static 'scripts/dark-mode.js' %}"></script>
+
+<!-- Contêiner que controla o alinhamento dos elementos -->
+<div class="content-container">
+    <h1 class="title">Monitoramento de Dados</h1>
+    <p class="description">Descrição do monitoramento ou outras informações adicionais.</p>
+
+    <div class="dashboard">
+        <div class="card">
+            <h3>Pedidos</h3>
+            <p>55</p>
+        </div>
+
+        <div class="card">
+            <h3>Plantas</h3>
+            <p>123</p>
+        </div>
+
+        <div class="card">
+            <h3>Coletas</h3>
+            <p>42</p>
+        </div>
+
+        <div class="card">
+            <h3>Colaboradores</h3>
+            <p>15</p>
+        </div>
+        <div class="card">
+            <h3>TESTE</h3>
+            <p>TESTES</p>
+        </div>
+        <div class="card">
+            <h3>123456789ABCDEFGHIJKL</h3>
+            <p>123456789ABCDEFGHIJKL</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

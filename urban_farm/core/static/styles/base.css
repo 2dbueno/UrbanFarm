@@ -1,0 +1,169 @@
+/* core/static/styles/base.css */
+
+/* Definindo as cores como variáveis */
+:root {
+    --cor-principal: #153243; /* Prussian Blue */
+    --cor-confirmacao: #1EAA3D; /* Confirmação */
+    --cor-terciaria: #295479; /* Indigo Dye */
+    --cor-branco: #FFFFFF; /* Branco */
+    --cor-fundo: #F4F9E9; /* Fundo do sistema */
+    --cor-fundo-dark: #2c2f33; /* Fundo escuro */
+}
+
+/* Reset e Estilos Globais */
+body, h1, h2, h3, h4, h5, h6, p, ul, li, a {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--cor-fundo);
+    display: flex;
+    height: 100vh;
+    overflow: hidden; /* Remove barras de rolagem horizontais */
+    transition: background-color 0.3s ease;
+}
+
+/* Sidebar Estilo */
+.sidebar {
+    width: 15.625rem; /* 250px */
+    height: 100vh;
+    background-color: var(--cor-principal);
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 1.25rem; /* 20px */
+    color: var(--cor-branco);
+    overflow-y: auto; /* Ativa a rolagem vertical */
+    transition: background-color 0.3s ease; /* Transição suave para o fundo */
+}
+
+/* Títulos na Sidebar */
+.sidebar h2 {
+    padding: 0.8rem 0.62rem;
+    color: var(--cor-confirmacao);
+    font-size: 2.2rem;
+}
+
+/* Estilo de listas na Sidebar */
+.sidebar ul {
+    list-style-type: none;
+    padding: 1.25rem 0; /* 20px */
+}
+
+.sidebar ul li {
+    margin: 0.9375rem 0; /* 15px */
+}
+
+.sidebar ul li a {
+    color: var(--cor-branco);
+    text-decoration: none;
+    display: block;
+    padding: 0.625rem 0.9375rem;
+    border-radius: 0.3125rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.sidebar ul li a:hover {
+    background-color: var(--cor-terciaria);
+    transition: 0.3s;
+}
+
+/* Estilo para link ativo */
+.sidebar ul li a.active-link {
+    border-left: 4px solid var(--cor-confirmacao);
+    font-weight: bold;
+}
+
+/* Conteúdo Principal */
+.main-content {
+    margin-left: 15.625rem; /* 250px */
+    padding: 2rem;
+    background-color: var(--cor-branco);
+    width: calc(100% - 15.625rem); /* largura descontando a sidebar */
+    height: 100vh;
+    overflow: auto;
+    transition: background-color 0.3s ease;
+}
+
+/* Estilos para modo escuro */
+body.dark .main-content {
+    background-color: var(--cor-fundo-dark);
+}
+
+/* Header Estilo */
+header {
+    background-color: var(--cor-principal);
+    padding: 1rem;
+    color: var(--cor-branco);
+    border-bottom: 2px solid var(--cor-confirmacao);
+}
+
+/* Estilo para o botão de troca de tema */
+.theme-toggle {
+    background-color: var(--cor-terciaria);
+    color: white;
+    border: none;
+    padding: 5px 20px; /* Adiciona espaçamento interno */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.theme-toggle:hover {
+    background-color: #409445;
+}
+
+/* Responsividade para Tablets e Telas Pequenas */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 10rem;
+    }
+
+    .main-content {
+        margin-left: 10rem;
+        width: calc(100% - 10rem);
+        padding: 1rem;
+    }
+}
+
+/* Responsividade para Celulares */
+@media (max-width: 480px) {
+    body {
+        display: block;
+        overflow: auto;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .sidebar ul {
+        padding: 1rem;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1rem;
+        height: auto;
+    }
+}
+
+/* Estilos para modo escuro */
+main-content.dark {
+    color: yellow;
+}
+
+body.dark .title {
+    color: var(--cor-branco);
+}
+
+body.dark .description {
+    color: var(--cor-branco);
+}

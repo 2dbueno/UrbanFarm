@@ -1,0 +1,111 @@
+/* Estilos globais */
+body, html {
+    margin: 0;
+    padding: 0;
+    border-bottom: 0;
+}
+
+header {
+    display: none;
+}
+
+/* Contêiner pai para alinhamento dos elementos */
+.content-container {
+    padding: 0 2rem;
+}
+
+/* Título da página de monitoramento */
+.title {
+    margin-bottom: 1rem;
+    color: var(--cor-principal);
+}
+
+/* Descrição */
+.description {
+    color: var(--cor-secundaria);
+}
+
+/* Dashboard com cards organizados em grid */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    width: 100%;
+    max-width: 1000px;
+    margin: 2rem auto 0; /* Centraliza horizontalmente e add espaço acima do card */
+    gap: 2rem; /* Espaçamento entre os cards */
+    justify-items: center; /* Centraliza o conteúdo do card no grid */
+}
+
+/* Estilo dos cards */
+.card {
+    background-color: var(--cor-branco);
+    border: 1px solid var(--cor-fundo);
+    border-color: var(--cor-principal);
+    border-radius: 0.5rem;
+    width: 200px; /* Largura fixa */
+    height: 150px; /* Altura fixa */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center; /* Centraliza o texto dentro do card */
+}
+
+/* Títulos dos cards */
+.card h3 {
+    font-size: 1.25rem;
+    color: var(--cor-terciaria);
+    word-break: break-word;
+}
+
+/* Valor dentro dos cards */
+.card p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--cor-confirmacao);
+    word-break: break-word;
+}
+
+/* Animação de hover nos cards */
+.card:hover {
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    .title {
+        font-size: 1.5rem; /* Ajusta o tamanho do título */
+    }
+
+    .card h3 {
+        font-size: 1rem; /* Reduz o tamanho do título dos cards */
+    }
+
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 1.25rem; /* Ajusta o tamanho do título */
+    }
+
+    .dashboard {
+        gap: 0.5rem; /* Reduz o espaçamento entre os cards */
+    }
+
+    .card h3 {
+        font-size: 0.875rem; /* Reduz o tamanho do h3 para textos longos */
+    }
+
+}
+
+body.dark {
+    background-color: var(--cor-fundo-dark); /* Certifique-se que o fundo escuro é aplicado */
+}
+
+body.dark .card {
+    background-color: var(--cor-fundo-dark); /* Fundo escuro para os cards */
+    border-color: var(--cor-branco); /* Fronteira branca para os cards */
+}
+
+body.dark .card h3 {
+    color: var(--cor-branco); /* Títulos dos cards em branco no modo escuro */
+}

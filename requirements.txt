@@ -1,0 +1,6 @@
+# Python 3.10
+Django==4.1
+mssql-django==1.5
+pyodbc==4.0.39
+pytz==2024.2
+sqlparse==0.5.1

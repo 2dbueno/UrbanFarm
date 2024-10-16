@@ -1,0 +1,47 @@
+<!-- core/templates/login.html -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Carregar tag static do Django -->
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Página de login do sistema Urban Farm. Acesse com seu usuário e senha para gerenciar a fazenda urbana.">
+    <meta name="keywords" content="login, Urban Farm, fazenda urbana, gerenciamento, usuário, senha">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Login - Urban Farm</title>
+    <!-- Link para o arquivo CSS externo -->
+    <link rel="stylesheet" href="{% static '/styles/login.css' %}">
+</head>
+<body>
+    <div class="background"></div>
+    <div class="container">
+
+        <div class="main-content">
+            <header>
+                <h1>{% block header %}Bem-vindo ao Urban Farm{% endblock %}</h1>
+            </header>
+
+        <!-- Mensagem de erro, se houver -->
+        {% if error_message %}
+            <p class="error-message">{{ error_message }}</p>
+        {% endif %}
+
+        <!-- Formulário de Login -->
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" id="username" name="username" placeholder="Login" required>
+            <input type="password" id="password" name="password" placeholder="Senha" required>
+            <button type="submit">ENTRAR</button>
+        </form>
+
+        <p>Em caso de perda de acesso, entre em contato com <br> seu <a>gerente</a> ou <a>supervisor</a>.</p>
+
+        <footer>
+            <p>&copy; 2024 Urban Farm. Todos os direitos reservados.</p>
+        </footer>
+
+    </div>
+</body>
+</html>
