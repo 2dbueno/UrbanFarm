@@ -3,12 +3,23 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
 from .models import Fornecedor, Monitoramento
 from .forms import FornecedorForm, EnderecoForm
 
-def login_view(request):
-    if request.method == 'POST':
+# Classe de login
+class LoginView(View):
+    template_name = 'login.html'
+
+    def get(self, request):
+        # Verifica se o usuário já está logado
+        if request.user.is_authenticated:
+            # Redireciona para a página inicial
+            return redirect('monitoramento/')
+        return render(request, self.template_name)
+    
+    def post(self, request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
@@ -17,33 +28,40 @@ def login_view(request):
             return redirect('monitoramento/')
         else:
             error_message = "Usuário ou senha inválidos. Contate seu superior."
-            return render(request, 'login.html', {'error_message': error_message})
-    return render(request, 'login.html')
+            return render(request, self.template_name, {'error_message': error_message})
+        
+# Classe para monitoramento
+class MonitoramentoView(LoginRequiredMixin, View):
+    template_name = 'monitoramento.html'
 
-@login_required
-def monitoramento_view(request):
-    return render(request, 'monitoramento.html')
+    def get(self, request):
+        monitoramento = Monitoramento.objects.first()
+        return render(request, self.template_name, {'monitoramento': monitoramento})
 
-@login_required
-def logout_view(request):
-    logout(request)
-    return redirect('core:login')
+# Classe para logout
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('core:login')
 
-def monitoramento_view(request):
-    # Recupera o primeiro registro de monitoramento no banco de dados
-    monitoramento = Monitoramento.objects.first()
-    
-    # Passa o objeto monitoramento para o template
-    return render(request, 'monitoramento.html', {'monitoramento': monitoramento})
+# Classe para exibição dos fornecedores
+class FornecedoresView(LoginRequiredMixin, View):
+    template_name = 'fornecedores.html'
 
-def fornecedores_view(request):
-    fornecedores = Fornecedor.objects.all()
-    form = FornecedorForm()  # Aqui, cria a instância do formulário para ser usada no template
-    endereco_form = EnderecoForm()  # Crie uma instância do formulário de endereço
-    return render(request, 'fornecedores.html', {'fornecedores': fornecedores, 'form': form, 'endereco_form': endereco_form})
+    def get(self, request):
+        fornecedores = Fornecedor.objects.all()
+        form = FornecedorForm()
+        endereco_form = EnderecoForm()
+        return render(request, self.template_name, {
+            'fornecedores': fornecedores, 
+            'form': form, 
+            'endereco_form': endereco_form
+        })
 
-def cadastrar_fornecedor(request):
-    if request.method == 'POST':
+# Classe para cadastrar fornecedor
+class CadastrarFornecedorView(View):
+
+    def post(self, request):
         fornecedor_form = FornecedorForm(request.POST)
         endereco_form = EnderecoForm(request.POST)
 
@@ -53,7 +71,6 @@ def cadastrar_fornecedor(request):
             fornecedor.endereco = endereco
             fornecedor.save()
 
-            # Retorno de sucesso em JSON
             return JsonResponse({
                 'success': True,
                 'fornecedor': {
@@ -64,14 +81,14 @@ def cadastrar_fornecedor(request):
                 }
             })
         else:
-            # Retorno de erros de validação em JSON
             errors = {**fornecedor_form.errors, **endereco_form.errors}
             return JsonResponse({
                 'success': False,
                 'errors': errors
             }, status=400)
 
-    return render(request, 'fornecedores.html', {
-        'form': FornecedorForm(),
-        'endereco_form': EnderecoForm(),
-    })
+    def get(self, request):
+        return render(request, 'fornecedores.html', {
+            'form': FornecedorForm(),
+            'endereco_form': EnderecoForm(),
+        })
