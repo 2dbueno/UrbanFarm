@@ -1,7 +1,7 @@
 <!-- core/templates/fornecedores.html -->
 {% extends 'base.html' %}
 
-{% block title %}Fornecedores{% endblock %}
+{% block title %}Fornecedores - Cadastro{% endblock %}
 
 {% load static %}
 <link rel="stylesheet" href="{% static 'styles/fornecedores.css' %}">
@@ -10,126 +10,112 @@
 {% block header %}
 <header class="header">
     <h1 class="title">Lista de Fornecedores</h1>
-    <input type="text" placeholder="Digite CNPJ do fornecedor" class="search-input">
-    <button id="openModal" class="cadastrar-fornecedor">Cadastrar Fornecedor</button>
+    <input type="text" placeholder="Digite CNPJ do fornecedor" class="search-input" aria-label="Pesquisar fornecedor pelo CNPJ">
+    <button id="openModal" class="cadastrar-fornecedor" aria-label="Cadastrar novo fornecedor">Cadastrar Fornecedor</button>
 </header>
 {% endblock %}
 
 {% block content %}
-<table class="fornecedores-table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>NOME FANTASIA</th>
-            <th>CNPJ</th>
-            <th>STATUS</th>
-        </tr>
-    </thead>
-    <tbody id="fornecedor-list">
-        {% for fornecedor in fornecedores %}
-        <tr>
-            <td>{{ fornecedor.id }}</td>
-            <td>{{ fornecedor.nome_fantasia }}</td>
-            <td>{{ fornecedor.cnpj|format_cnpj }}</td>
-            <td class="{% if fornecedor.status %}ativo{% else %}inativo{% endif %}">{{ fornecedor.status|yesno:"ATIVO,INATIVO" }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="4">Nenhum fornecedor cadastrado.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<main>
+    <table class="fornecedores-table" aria-label="Tabela de fornecedores">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>NOME FANTASIA</th>
+                <th>CNPJ</th>
+                <th>STATUS</th>
+            </tr>
+        </thead>
+        <tbody id="fornecedor-list">
+            {% for fornecedor in fornecedores %}
+            <tr>
+                <td>{{ fornecedor.id }}</td>
+                <td>{{ fornecedor.nome_fantasia }}</td>
+                <td>{{ fornecedor.cnpj|format_cnpj }}</td>
+                <td class="{% if fornecedor.status %}ativo{% else %}inativo{% endif %}">{{ fornecedor.status|yesno:"ATIVO,INATIVO" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">Nenhum fornecedor cadastrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-<!-- Popup de cadastro -->
-<div id="modal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Cadastrar Fornecedor</h2>
+    <div id="modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-describedby="modal-description">
+        <div class="modal-content">
+            <button class="close" aria-label="Fechar modal">&times;</button>
+            <h2 id="modal-title">Cadastrar Fornecedor</h2>
 
-        <!-- Exibição de erros gerais do formulário -->
-        {% if form.errors or endereco_form.errors %}
-        <div class="error-message">
-            <ul>
-                {% for field, errors in form.errors.items %}
-                    <li>{{ field }}: {{ errors|escape }}</li>
-                {% endfor %}
-                {% for field, errors in endereco_form.errors.items %}
-                    <li>{{ field }}: {{ errors|escape }}</li>
-                {% endfor %}
-            </ul>
+            {% if form.errors or endereco_form.errors %}
+            <div class="error-message">
+                <ul>
+                    {% for field, errors in form.errors.items %}
+                        <li>{{ field.label }}: {{ errors|escape }}</li>
+                    {% endfor %}
+                    {% for field, errors in endereco_form.errors.items %}
+                        <li>{{ field.label }}: {{ errors|escape }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form id="fornecedorForm" method="post" aria-labelledby="form-title">
+                {% csrf_token %}
+                <fieldset class="form-section">
+                    <legend>Dados do Fornecedor</legend>
+                    <div class="form-grid">
+                        <!-- Campos do Fornecedor -->
+                        {% for field in form %}
+                        <!-- Ignora o campo status porque eu deixo ele como switch depois -->
+                        {% if field.name != "status" %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="input-error">{{ field.errors|escape }}</div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section">
+                    <legend>Dados do Endereço</legend>
+                    <div class="form-grid">
+                        <!-- Campos do Endereço -->
+                        {% for field in endereco_form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="input-error">{{ field.errors|escape }}</div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+                
+                <fieldset class="form-section">
+                    <legend>Status do Fornecedor</legend>
+                    <div class="form-group">
+                        <label for="status">Ativo</label>
+                        <label class="switch">
+                            <input type="checkbox" name="status" id="status" {% if form.instance.status %}checked{% endif %}>
+                            <span class="slider round"></span>
+                        </label>
+                        <small class="status-description">Use o botão para ativar ou desativar o fornecedor</small>
+                    </div>
+                </fieldset>                
+
+                <div class="form-submit">
+                    <button type="submit" class="submit-btn">Cadastrar</button>
+                </div>
+            </form>
         </div>
-        {% endif %}
-
-        <form id="fornecedorForm" method="post">
-            {% csrf_token %}
-            <table class="form-table">
-                <!-- Campos do Fornecedor -->
-                <tr>
-                    <td>{{ form.cnpj.label_tag }}</td>
-                    <td>{{ form.cnpj }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form.status.label_tag }}</td>
-                    <td>{{ form.status }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form.razao_social.label_tag }}</td>
-                    <td>{{ form.razao_social }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form.nome_fantasia.label_tag }}</td>
-                    <td>{{ form.nome_fantasia }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form.nome_representante.label_tag }}</td>
-                    <td>{{ form.nome_representante }}</td>
-                </tr>
-        
-                <!-- Campos do Endereço -->
-                <tr>
-                    <td>{{ endereco_form.cep.label_tag }}</td>
-                    <td>{{ endereco_form.cep }}</td>
-                </tr>
-                <tr>
-                    <td>{{ endereco_form.endereco.label_tag }}</td>
-                    <td>{{ endereco_form.endereco }}</td>
-                </tr>
-                <tr>
-                    <td>{{ endereco_form.complemento.label_tag }}</td>
-                    <td>{{ endereco_form.complemento }}</td>
-                </tr>
-                <tr>
-                    <td>{{ endereco_form.cidade.label_tag }}</td>
-                    <td>{{ endereco_form.cidade }}</td>
-                </tr>
-                <tr>
-                    <td>{{ endereco_form.estado.label_tag }}</td>
-                    <td>{{ endereco_form.estado }}</td>
-                </tr>
-                <tr>
-                    <td>{{ endereco_form.bairro.label_tag }}</td>
-                    <td>{{ endereco_form.bairro }}</td>
-                </tr>
-                <tr>
-                    <td>{{ endereco_form.telefone.label_tag }}</td>
-                    <td>{{ endereco_form.telefone }}</td>
-                </tr>
-                <tr>
-                    <td>{{ endereco_form.email.label_tag }}</td>
-                    <td>{{ endereco_form.email }}</td>
-                </tr>
-        
-                <tr>
-                    <td colspan="2">
-                        <button type="submit">Cadastrar</button>
-                    </td>
-                </tr>
-            </table>
-        </form>
-        
     </div>
-</div>
+</main>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{% static 'scripts/fornecedores.js' %}"></script>

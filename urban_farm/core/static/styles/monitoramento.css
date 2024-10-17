@@ -9,6 +9,10 @@ header {
     display: none;
 }
 
+.main-content{
+    padding: 2rem;
+}
+
 /* Contêiner pai para alinhamento dos elementos */
 .content-container {
     padding: 0 2rem;

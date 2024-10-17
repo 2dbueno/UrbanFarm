@@ -42,10 +42,11 @@ $(document).ready(function() {
                     <td>${response.fornecedor.id}</td>
                     <td>${response.fornecedor.nome_fantasia}</td>
                     <td>${formatarCNPJ(response.fornecedor.cnpj)}</td>  // Formatação do CNPJ aqui
-                    <td class="ativo">ATIVO</td>
+                    <td ${response.fornecedor.status}</td>
                 </tr>`);
                 // Fecha o modal
                 document.getElementById("modal").style.display = "none";
+                location.reload() // Atualiza a pagina para atualizar o status do fornecedor
             },
             
             error: function(xhr) {

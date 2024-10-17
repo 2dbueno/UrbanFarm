@@ -81,7 +81,6 @@ body {
 /* Conteúdo Principal */
 .main-content {
     margin-left: 15.625rem; /* 250px */
-    padding: 2rem;
     background-color: var(--cor-branco);
     width: calc(100% - 15.625rem); /* largura descontando a sidebar */
     height: 100vh;
