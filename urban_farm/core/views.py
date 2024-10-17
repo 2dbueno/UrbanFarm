@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from .models import Fornecedor
+from .models import Fornecedor, Monitoramento
 from .forms import FornecedorForm, EnderecoForm
 
 def login_view(request):
@@ -28,6 +28,13 @@ def monitoramento_view(request):
 def logout_view(request):
     logout(request)
     return redirect('core:login')
+
+def monitoramento_view(request):
+    # Recupera o primeiro registro de monitoramento no banco de dados
+    monitoramento = Monitoramento.objects.first()
+    
+    # Passa o objeto monitoramento para o template
+    return render(request, 'monitoramento.html', {'monitoramento': monitoramento})
 
 def fornecedores_view(request):
     fornecedores = Fornecedor.objects.all()

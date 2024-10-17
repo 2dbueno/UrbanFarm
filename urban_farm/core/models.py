@@ -7,7 +7,14 @@ class Perfil(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     # Aumentando o max_length para 12
     nivel_permissao = models.CharField(max_length=12, choices=[('master', 'Master'), ('colaborador', 'Colaborador')])
-
+class Monitoramento(models.Model):
+    pedidos = models.IntegerField()
+    plantas = models.IntegerField()
+    coletas = models.IntegerField()
+    kg_colheita = models.FloatField()
+    temperatura_ar = models.FloatField()
+    quantidade_agua = models.FloatField()
+    valor_ph = models.FloatField()
 class Produto(models.Model):
     nome = models.CharField(max_length=100)
     preco = models.DecimalField(max_digits=10, decimal_places=2)

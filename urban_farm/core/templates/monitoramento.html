@@ -8,38 +8,44 @@
 <link rel="stylesheet" href="{% static '/styles/monitoramento.css' %}">
 <script src="{% static 'scripts/dark-mode.js' %}"></script>
 
-<!-- Contêiner que controla o alinhamento dos elementos -->
 <div class="content-container">
     <h1 class="title">Monitoramento de Dados</h1>
-    <p class="description">Descrição do monitoramento ou outras informações adicionais.</p>
+    <p class="description">Monitoramento em tempo real dos dados da fazenda urbana.</p>
 
     <div class="dashboard">
         <div class="card">
             <h3>Pedidos</h3>
-            <p>55</p>
+            <p>{{ monitoramento.pedidos }}</p>
         </div>
 
         <div class="card">
             <h3>Plantas</h3>
-            <p>123</p>
+            <p>{{ monitoramento.plantas }}</p>
         </div>
 
         <div class="card">
             <h3>Coletas</h3>
-            <p>42</p>
+            <p>{{ monitoramento.coletas }}</p>
         </div>
 
         <div class="card">
-            <h3>Colaboradores</h3>
-            <p>15</p>
+            <h3>Kg de Colheita</h3>
+            <p>{{ monitoramento.kg_colheita }}</p>
         </div>
+
         <div class="card">
-            <h3>TESTE</h3>
-            <p>TESTES</p>
+            <h3>Temperatura do Ar</h3>
+            <p>{{ monitoramento.temperatura_ar }}°C</p>
         </div>
+
         <div class="card">
-            <h3>123456789ABCDEFGHIJKL</h3>
-            <p>123456789ABCDEFGHIJKL</p>
+            <h3>Quantidade de Água</h3>
+            <p>{{ monitoramento.quantidade_agua }} L</p>
+        </div>
+
+        <div class="card">
+            <h3>Valor do pH</h3>
+            <p>{{ monitoramento.valor_ph }}</p>
         </div>
     </div>
 </div>

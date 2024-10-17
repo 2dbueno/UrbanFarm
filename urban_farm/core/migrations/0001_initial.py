@@ -4,6 +4,17 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 
+def create_initial_monitoramento(apps, schema_editor):
+    Monitoramento = apps.get_model('core', 'Monitoramento')  # 'core' é o nome do app
+    Monitoramento.objects.create(
+        pedidos=55,
+        plantas=123,
+        coletas=42,
+        kg_colheita=100.5,
+        temperatura_ar=22.3,
+        quantidade_agua=120.5,
+        valor_ph=6.8
+    )
 
 class Migration(migrations.Migration):
 
@@ -14,6 +25,21 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.CreateModel(
+            name='Monitoramento',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),  # Altere para BigAutoField
+                ('pedidos', models.IntegerField()),
+                ('plantas', models.IntegerField()),
+                ('coletas', models.IntegerField()),
+                ('kg_colheita', models.FloatField()),
+                ('temperatura_ar', models.FloatField()),
+                ('quantidade_agua', models.FloatField()),
+                ('valor_ph', models.FloatField()),
+            ],
+        ),
+        migrations.RunPython(create_initial_monitoramento),  # Chama a função para criar dados
+
         migrations.CreateModel(
             name='Endereco',
             fields=[
