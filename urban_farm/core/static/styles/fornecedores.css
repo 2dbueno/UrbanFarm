@@ -189,3 +189,38 @@ input:checked + .slider:before {
     color: #777;
     margin-top: 5px;
 }
+/* Estilos para os botões "Salvar" e "Cancelar" */
+.edit-buttons {
+    display: flex;
+    justify-content: center; /* Centraliza os botões */
+    gap: 10px; /* Espaçamento entre os botões */
+    margin-top: 20px; /* Margem superior para separar do restante do formulário */
+}
+
+.save-btn, .cancel-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px; /* Tamanho da fonte */
+}
+
+/* Estilo para o botão "Salvar" */
+.save-btn {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+}
+
+.save-btn:hover {
+    background-color: #45a049; /* Verde mais escuro ao passar o mouse */
+}
+
+/* Estilo para o botão "Cancelar" */
+.cancel-btn {
+    background-color: #f44336; /* Vermelho */
+    color: white;
+}
+
+.cancel-btn:hover {
+    background-color: #e53935; /* Vermelho mais escuro ao passar o mouse */
+}

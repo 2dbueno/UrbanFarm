@@ -47,27 +47,12 @@
             <button class="close" aria-label="Fechar modal">&times;</button>
             <h2 id="modal-title">Cadastrar Fornecedor</h2>
 
-            {% if form.errors or endereco_form.errors %}
-            <div class="error-message">
-                <ul>
-                    {% for field, errors in form.errors.items %}
-                        <li>{{ field.label }}: {{ errors|escape }}</li>
-                    {% endfor %}
-                    {% for field, errors in endereco_form.errors.items %}
-                        <li>{{ field.label }}: {{ errors|escape }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
-
             <form id="fornecedorForm" method="post" aria-labelledby="form-title">
                 {% csrf_token %}
                 <fieldset class="form-section">
                     <legend>Dados do Fornecedor</legend>
                     <div class="form-grid">
-                        <!-- Campos do Fornecedor -->
                         {% for field in form %}
-                        <!-- Ignora o campo status porque eu deixo ele como switch depois -->
                         {% if field.name != "status" %}
                         <div class="form-group">
                             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
@@ -84,7 +69,6 @@
                 <fieldset class="form-section">
                     <legend>Dados do Endereço</legend>
                     <div class="form-grid">
-                        <!-- Campos do Endereço -->
                         {% for field in endereco_form %}
                         <div class="form-group">
                             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
@@ -107,10 +91,15 @@
                         </label>
                         <small class="status-description">Use o botão para ativar ou desativar o fornecedor</small>
                     </div>
-                </fieldset>                
+                </fieldset>                 
 
                 <div class="form-submit">
                     <button type="submit" class="submit-btn">Cadastrar</button>
+                </div>
+
+                <div class="edit-buttons" style="display: none; text-align: center;">
+                    <button type="button" class="save-btn">Salvar</button>
+                    <button type="button" class="cancel-btn">Cancelar</button>
                 </div>
             </form>
         </div>

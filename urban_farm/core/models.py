@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 
 class Perfil(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # Aumentando o max_length para 12
     nivel_permissao = models.CharField(max_length=12, choices=[('master', 'Master'), ('colaborador', 'Colaborador')])
 class Monitoramento(models.Model):
     pedidos = models.IntegerField()
