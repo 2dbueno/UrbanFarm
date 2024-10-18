@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from .models import Fornecedor, Monitoramento
 from .forms import FornecedorForm, EnderecoForm
+from django.shortcuts import get_object_or_404
 
 # Classe de login
 class LoginView(View):
@@ -91,4 +92,33 @@ class CadastrarFornecedorView(View):
         return render(request, 'fornecedores.html', {
             'form': FornecedorForm(),
             'endereco_form': EnderecoForm(),
+        })
+    
+# Classe para editar fornecedor
+
+class BuscarFornecedorView(View):
+    
+    def get(self, request, fornecedor_id):
+        fornecedor = get_object_or_404(Fornecedor, id=fornecedor_id)
+        endereco = fornecedor.endereco
+
+        # Retorna os dados em formato JSON
+        return JsonResponse({
+            'fornecedor': {
+                'cnpj': fornecedor.cnpj,
+                'status': fornecedor.status,
+                'razao_social': fornecedor.razao_social,
+                'nome_fantasia': fornecedor.nome_fantasia,
+                'nome_representante': fornecedor.nome_representante,
+            },
+            'endereco': {
+                'cep': endereco.cep,
+                'endereco': endereco.endereco,
+                'complemento': endereco.complemento,
+                'cidade': endereco.cidade,
+                'estado': endereco.estado,
+                'bairro': endereco.bairro,
+                'telefone': endereco.telefone,
+                'email': endereco.email,
+            }
         })

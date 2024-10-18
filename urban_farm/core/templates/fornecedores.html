@@ -28,7 +28,7 @@
         </thead>
         <tbody id="fornecedor-list">
             {% for fornecedor in fornecedores %}
-            <tr>
+            <tr data-id="{{ fornecedor.id }}" class="fornecedor-row">
                 <td>{{ fornecedor.id }}</td>
                 <td>{{ fornecedor.nome_fantasia }}</td>
                 <td>{{ fornecedor.cnpj|format_cnpj }}</td>
@@ -40,7 +40,7 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
+    </table>    
 
     <div id="modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-describedby="modal-description">
         <div class="modal-content">
@@ -121,5 +121,6 @@
 <script src="{% static 'scripts/fornecedores.js' %}"></script>
 <script>
     var cadastrar_fornecedor_url = "{% url 'core:cadastrar_fornecedor' %}";
+    var buscar_fornecedor_url = "{% url 'core:buscar_fornecedor' 0 %}".replace('/0/', '/');  // Corrige a URL base
 </script>
 {% endblock %}

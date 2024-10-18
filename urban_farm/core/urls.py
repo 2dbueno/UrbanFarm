@@ -1,7 +1,7 @@
 # core/urls.py
 
 from django.urls import path
-from .views import LoginView, MonitoramentoView, FornecedoresView, LogoutView, CadastrarFornecedorView
+from .views import LoginView, MonitoramentoView, FornecedoresView, LogoutView, CadastrarFornecedorView, BuscarFornecedorView
 
 app_name = 'core'
 
@@ -11,4 +11,6 @@ urlpatterns = [
     path('fornecedores/', FornecedoresView.as_view(), name='fornecedores'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('fornecedores/cadastrar_fornecedor/', CadastrarFornecedorView.as_view(), name='cadastrar_fornecedor'),
+    path('buscar_fornecedor/<int:fornecedor_id>/', BuscarFornecedorView.as_view(), name='buscar_fornecedor'),
+
 ]
