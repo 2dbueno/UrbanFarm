@@ -1,9 +1,9 @@
 # core/views.py
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views import View
 from .models import Fornecedor, Monitoramento
 from .forms import FornecedorForm, EnderecoForm
@@ -94,15 +94,12 @@ class CadastrarFornecedorView(View):
             'endereco_form': EnderecoForm(),
         })
     
-# Classe para editar fornecedor
-
+# Classe para buscar fornecedor
 class BuscarFornecedorView(View):
-    
     def get(self, request, fornecedor_id):
         fornecedor = get_object_or_404(Fornecedor, id=fornecedor_id)
         endereco = fornecedor.endereco
 
-        # Retorna os dados em formato JSON
         return JsonResponse({
             'fornecedor': {
                 'cnpj': fornecedor.cnpj,
@@ -120,5 +117,26 @@ class BuscarFornecedorView(View):
                 'bairro': endereco.bairro,
                 'telefone': endereco.telefone,
                 'email': endereco.email,
-            }
+            },
+            'user_has_permission': request.user.is_superuser
         })
+
+# Classe para editar fornecedor
+class EditarFornecedorView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_superuser  # Apenas superusuários podem acessar
+
+    def get(self, request, fornecedor_id):
+        fornecedor = get_object_or_404(Fornecedor, id=fornecedor_id)
+        form = FornecedorForm(instance=fornecedor)
+        return render(request, 'core/fornecedor.html', {'form': form, 'fornecedor': fornecedor})
+
+    def post(self, request, fornecedor_id):
+        fornecedor = get_object_or_404(Fornecedor, id=fornecedor_id)
+        form = FornecedorForm(request.POST, instance=fornecedor)
+
+        if form.is_valid():
+            form.save()
+            return redirect('core:fornecedores')  # Redireciona para a lista de fornecedores
+
+        return render(request, 'core/fornecedor.html', {'form': form, 'fornecedor': fornecedor})

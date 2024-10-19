@@ -24,6 +24,7 @@
                 <th>NOME FANTASIA</th>
                 <th>CNPJ</th>
                 <th>STATUS</th>
+                <th>AÇÃO</th> <!-- Nova coluna para Ação -->
             </tr>
         </thead>
         <tbody id="fornecedor-list">
@@ -33,10 +34,17 @@
                 <td>{{ fornecedor.nome_fantasia }}</td>
                 <td>{{ fornecedor.cnpj|format_cnpj }}</td>
                 <td class="{% if fornecedor.status %}ativo{% else %}inativo{% endif %}">{{ fornecedor.status|yesno:"ATIVO,INATIVO" }}</td>
+                <td>
+                    {% if user.is_superuser %}
+                        <button class="edit-btn" aria-label="Editar fornecedor" data-id="{{ fornecedor.id }}">Editar</button>
+                    {% else %}
+                        <span title="Você não tem permissão para editar este fornecedor">🔒</span> <!-- Emoji de cadeado -->
+                    {% endif %}
+                </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="4">Nenhum fornecedor cadastrado.</td>
+                <td colspan="5">Nenhum fornecedor cadastrado.</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -86,21 +94,22 @@
                     <div class="form-group">
                         <label for="status">Ativo</label>
                         <label class="switch">
-                            <input type="checkbox" name="status" id="status" {% if form.instance.status %}checked{% endif %}>
+                            <input type="checkbox" name="status" id="status" {% if form.instance.status %}checked{% endif %} {% if not user_has_permission %}disabled{% endif %}>
                             <span class="slider round"></span>
                         </label>
                         <small class="status-description">Use o botão para ativar ou desativar o fornecedor</small>
                     </div>
-                </fieldset>                 
+                </fieldset>                  
 
                 <div class="form-submit">
-                    <button type="submit" class="submit-btn">Cadastrar</button>
+                    <button type="button" class="submit-btn" style="display: none;">Editar</button> <!-- Esconde o botão "Editar" -->
                 </div>
-
-                <div class="edit-buttons" style="display: none; text-align: center;">
+                
+                <div class="edit-buttons" style="display: none; text-align: center;"> <!-- Esconde "Salvar" e "Cancelar" inicialmente -->
                     <button type="button" class="save-btn">Salvar</button>
                     <button type="button" class="cancel-btn">Cancelar</button>
                 </div>
+                
             </form>
         </div>
     </div>
@@ -111,5 +120,6 @@
 <script>
     var cadastrar_fornecedor_url = "{% url 'core:cadastrar_fornecedor' %}";
     var buscar_fornecedor_url = "{% url 'core:buscar_fornecedor' 0 %}".replace('/0/', '/');  // Corrige a URL base
+    var editar_fornecedor_url = "{% url 'core:editar_fornecedor' '0' %}".replace('/0/', '/'); // URL para edição
 </script>
 {% endblock %}
