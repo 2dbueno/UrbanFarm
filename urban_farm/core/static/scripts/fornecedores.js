@@ -30,6 +30,38 @@ window.onclick = function(event) {
     }
 }
 
+// Selecionar os elementos do modal de confirmação
+var confirmModal = document.getElementById('confirmModal');
+var confirmYesBtn = document.querySelector('.confirm-yes-btn');
+var confirmNoBtn = document.querySelector('.confirm-no-btn');
+
+// Função para abrir o modal de confirmação
+function abrirConfirmacao() {
+    confirmModal.style.display = 'block'; // Mostrar o modal de confirmação
+}
+
+// Evento para o botão de "Sim" no popup de confirmação
+confirmYesBtn.addEventListener('click', function() {
+    // Submeter o formulário ao confirmar "Sim"
+    $('#fornecedorForm').submit();
+    confirmModal.style.display = 'none'; // Fechar o modal de confirmação
+    location.reload()
+});
+
+// Evento para o botão de "Não" no popup de confirmação
+confirmNoBtn.addEventListener('click', function() {
+    // Apenas fechar o modal de confirmação sem submeter o formulário
+    confirmModal.style.display = 'none';
+});
+
+// Evento para o botão de salvar
+document.querySelector('.save-btn').addEventListener('click', function(event) {
+    event.preventDefault(); // Impedir o envio imediato do formulário
+    abrirConfirmacao(); // Abrir o popup de confirmação para salvar
+});
+
+
+
 // Variável para armazenar a URL de cadastro de fornecedor
 var cadastrar_fornecedor_url = cadastrar_fornecedor_url;
 
@@ -96,10 +128,6 @@ $(document).ready(function() {
         $('.edit-buttons').show();
     });
 
-    // Evento para o botão "Salvar"
-    $('.save-btn').on('click', function() {
-        $('#fornecedorForm').submit(); // Submete o formulário
-    });
 
     // Evento para o botão "Cancelar"
     $('.cancel-btn').on('click', function() {
