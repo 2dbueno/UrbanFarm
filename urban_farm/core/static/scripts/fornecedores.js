@@ -60,8 +60,6 @@ document.querySelector('.save-btn').addEventListener('click', function(event) {
     abrirConfirmacao(); // Abrir o popup de confirmação para salvar
 });
 
-
-
 // Variável para armazenar a URL de cadastro de fornecedor
 var cadastrar_fornecedor_url = cadastrar_fornecedor_url;
 
@@ -127,7 +125,6 @@ $(document).ready(function() {
         $(this).hide();
         $('.edit-buttons').show();
     });
-
 
     // Evento para o botão "Cancelar"
     $('.cancel-btn').on('click', function() {
