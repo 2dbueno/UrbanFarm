@@ -17,7 +17,8 @@ document.getElementById("openModal").onclick = function() {
 
     // Certifique-se de que todos os campos estão habilitados para cadastro
     $('#fornecedorForm').find('input, select').prop('disabled', false); // Habilita todos os campos
-    $('.submit-btn').text("Cadastrar"); // Define o texto do botão como "Cadastrar"
+    $('.submit-btn').text("Cadastrar").show(); // Mostra o botão e define o texto
+    $('.edit-buttons').hide(); // Esconde os botões de edição
 }
 
 document.getElementsByClassName("close")[0].onclick = function() {
@@ -113,17 +114,19 @@ $(document).ready(function() {
         });
     });
     
-    // Evento para habilitar os campos ao clicar no botão "Editar"
+    // Evento para o botão principal (Cadastrar/Editar)
     $('.submit-btn').on('click', function(event) {
-        event.preventDefault(); // Previne a submissão do formulário
-
-        // Habilita todos os campos do formulário, incluindo status
-        $('#fornecedorForm').find('input, select').prop('disabled', false);
-        $('#fornecedorForm').find('[name="status"]').prop('disabled', false);
-
-        // Esconde o botão "Editar" e mostra "Salvar" e "Cancelar"
-        $(this).hide();
-        $('.edit-buttons').show();
+        event.preventDefault();
+        if ($(this).text() === "Cadastrar") {
+            // Lógica para cadastrar
+            $('#fornecedorForm').submit();
+        } else {
+            // Lógica para habilitar edição
+            $('#fornecedorForm').find('input, select').prop('disabled', false);
+            $('#fornecedorForm').find('[name="status"]').prop('disabled', false);
+            $(this).hide();
+            $('.edit-buttons').show();
+        }
     });
 
     // Evento para o botão "Cancelar"
@@ -163,6 +166,9 @@ $(document).ready(function() {
                             <td>${response.fornecedor.nome_fantasia}</td>
                             <td>${formatarCNPJ(response.fornecedor.cnpj)}</td>
                             <td class="${response.fornecedor.status ? 'ativo' : 'inativo'}">${response.fornecedor.status ? 'ATIVO' : 'INATIVO'}</td>
+                            <td>
+                                ${response.user_is_superuser ? `<button class="edit-btn" aria-label="Editar fornecedor" data-id="${response.fornecedor.id}">Editar</button>` : '<span title="Você não tem permissão para editar este fornecedor">🔒</span>'}
+                            </td>
                         </tr>
                     `);
                 }
