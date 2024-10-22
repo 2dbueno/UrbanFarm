@@ -58,3 +58,29 @@ class Funcionario(models.Model):
     status = models.BooleanField(default=True)
     nome = models.CharField(max_length=100)
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
+
+from django.db import models
+
+class Planta(models.Model):
+    ESTAGIOS_PLANTIO = [
+        ('GERMINACAO', 'Germinação'),
+        ('PLANTULA', 'Plântula'),
+        ('VEGETATIVO', 'Vegetativo'),
+        ('FLORACAO', 'Floração'),
+        ('FRUTIFICACAO', 'Frutificação'),
+        ('COLHEITA', 'Colheita'),
+    ]
+
+    nome = models.CharField(max_length=100)
+    data_plantio = models.DateField()
+    quantidade_plantada = models.DecimalField(max_digits=10, decimal_places=2)  # Quantidade em kg
+    estagio = models.CharField(max_length=20, choices=ESTAGIOS_PLANTIO)
+    data_colheita_estimada = models.DateField(null=True, blank=True)  # Pode ser preenchida posteriormente
+
+    def __str__(self):
+        return self.nome
+
+    class Meta:
+        verbose_name = 'Planta'
+        verbose_name_plural = 'Plantas'
+        ordering = ['data_plantio']  # Ordena pela data de plantio

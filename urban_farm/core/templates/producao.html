@@ -1,0 +1,77 @@
+<!-- core/templates/core/producao.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Produção - Urban Farm{% endblock %}
+
+{% block header %}
+<header class="header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <h1 class="title">Tela de Produção</h1>
+    <input type="text" class="search-input" id="search" placeholder="Buscar planta..." aria-label="Buscar planta">
+</header>
+{% endblock %}
+
+{% block content %}
+<main>
+    <div class="table-container">
+        <table class="fornecedores-table" aria-label="Tabela de produção">
+            <thead>
+                <tr>
+                    <th>Nome da Planta</th>
+                    <th>Data de Plantio</th>
+                    <th>Quantidade Plantada (kg)</th>
+                    <th>Estágio</th>
+                    <th>Data de Colheita Estimada</th>
+                </tr>
+            </thead>
+            <tbody id="plant-table-body">
+                {% for planta in plantas %}
+                <tr>
+                    <td>{{ planta.nome }}</td>
+                    <td>{{ planta.data_plantio }}</td>
+                    <td>{{ planta.quantidade_plantada }}</td>
+                    <td>{{ planta.get_estagio_display }}</td>
+                    <td>{{ planta.data_colheita_estimada }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">Nenhuma planta encontrada.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Adicionando link ao CSS específico de produção -->
+<link rel="stylesheet" href="{% static 'styles/producao.css' %}">
+
+<script>
+    function filterPlants() {
+        const input = document.getElementById('search');
+        const filter = input.value.toLowerCase();
+        const tableBody = document.getElementById('plant-table-body');
+        const rows = tableBody.getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let found = false;
+
+            for (let j = 0; j < cells.length; j++) {
+                const cell = cells[j];
+                if (cell) {
+                    if (cell.textContent.toLowerCase().includes(filter)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            rows[i].style.display = found ? '' : 'none';
+        }
+    }
+
+    document.getElementById('search').addEventListener('keyup', filterPlants);
+</script>
+{% endblock %}

@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views import View
-from .models import Fornecedor, Monitoramento
+from .models import Fornecedor, Monitoramento, Planta
 from .forms import FornecedorForm, EnderecoForm
 
 # Classe base para views relacionadas a fornecedores.
@@ -183,3 +183,10 @@ class DeletarFornecedorView(LoginRequiredMixin, UserPassesTestMixin, View):
         fornecedor = get_object_or_404(Fornecedor, id=fornecedor_id)
         fornecedor.delete()
         return JsonResponse({'success': True})
+
+def ProducaoView(request):
+    # Obtém todas as plantas do banco de dados
+    plantas = Planta.objects.all()
+    
+    # Renderiza a template com o contexto das plantas
+    return render(request, 'producao.html', {'plantas': plantas})

@@ -1,7 +1,6 @@
 <!-- core/templates/base.html -->
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +12,7 @@
     <!-- Estilos -->
     <link rel="stylesheet" href="{% static 'styles/base.css' %}">
     <link rel="stylesheet" href="{% static 'styles/fornecedores.css' %}">
+
 </head>
 <body>
     <!-- Navegação Lateral -->
@@ -22,7 +22,7 @@
         <ul>
             <li><a href="{% url 'core:monitoramento' %}">Monitoramento</a></li>
             <li><a href="{% url 'core:fornecedores' %}">Fornecedores</a></li>
-            {% comment %} <li><a href="{% url 'core:reports' %}">Relatórios</a></li> {% endcomment %}
+            <li><a href="{% url 'core:producao' %}">Producao</a></li>
             {% comment %} <li><a href="{% url 'core:settings' %}">Configurações</a></li> {% endcomment %}
         </ul>
     </nav>
