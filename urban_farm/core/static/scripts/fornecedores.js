@@ -15,7 +15,10 @@ document.getElementById("openModal").onclick = function() {
     $('#fornecedorForm').data('url', cadastrar_fornecedor_url);
     $('#modal-title').text("Cadastrar Fornecedor");
 
-    // Certifique-se de que todos os campos estão habilitados para cadastro
+    // Limpa mensagens de erro anteriores
+    $('.error-message').remove();
+    $('input, select').removeClass('input-error');
+
     $('#fornecedorForm').find('input, select').prop('disabled', false); // Habilita todos os campos
     $('.submit-btn').text("Cadastrar").show(); // Mostra o botão e define o texto
     $('.edit-buttons').hide(); // Esconde os botões de edição
@@ -69,9 +72,12 @@ $(document).ready(function() {
     $('.fornecedor-row').on('click', function() {
         var fornecedorId = $(this).data('id'); // Pega o ID do fornecedor da linha clicada
         var url = `/buscar_fornecedor/${fornecedorId}/`;
-
         // Faz uma requisição AJAX para buscar os dados do fornecedor
         $.get(url, function(response) {
+            // Limpa mensagens de erro anteriores
+            $('.error-message').remove();
+            $('input, select').removeClass('input-error');
+
             // Preenche o formulário com os dados do fornecedor
             $('#fornecedorForm').find('[name="cnpj"]').val(response.fornecedor.cnpj).prop('disabled', true);
             $('#fornecedorForm').find('[name="status"]').prop('checked', response.fornecedor.status).prop('disabled', true);
@@ -99,7 +105,7 @@ $(document).ready(function() {
             // Verifica se o usuário tem permissão para editar
             if (response.user_has_permission) {
                 // Mostra o botão "Editar" e esconde os de salvar/cancelar
-                $('.submit-btn').show(); 
+                $('.submit-btn').text("Editar").show(); // Altera o texto do botão para "Editar"
                 $('.edit-buttons').hide();
 
                 // Abre o modal
@@ -110,7 +116,7 @@ $(document).ready(function() {
                 document.getElementById("modal").style.display = "block"; // Abre o modal
             }
         }).fail(function(xhr) {
-            console .error('Erro ao buscar fornecedor:', xhr);
+            console.error('Erro ao buscar fornecedor:', xhr);
         });
     });
     
