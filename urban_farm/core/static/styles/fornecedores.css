@@ -23,9 +23,11 @@ html, body {
     margin-top: 10px;
     padding: 8px;
     font-size: 14px;
-    width: 300px;
+    width: 90%; /* Altera a largura para 90% */
+    max-width: 300px; /* Limita a largura máxima */
     border: 1px solid #ccc;
     border-radius: 4px;
+    box-sizing: border-box; /* Inclui padding e border na largura total */
 }
 
 .fornecedores-table {
