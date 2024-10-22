@@ -119,7 +119,43 @@ $(document).ready(function() {
             console.error('Erro ao buscar fornecedor:', xhr);
         });
     });
-    
+    $('.search-input').on('input', function() {
+        var cnpj = $(this).val().replace(/\D/g, ''); // Remove caracteres não numéricos
+
+        if (cnpj.length >= 3) { // Verifica se o CNPJ tem pelo menos 3 dígitos
+            $.ajax({
+                url: buscar_fornecedor_url + 'cnpj/' + cnpj + '/', // Atualiza a URL com o CNPJ
+                type: 'GET',
+                success: function(response) {
+                    $('#fornecedor-list').empty(); // Limpa a tabela antes de preencher
+                    if (response.fornecedores.length > 0) {
+                        // Preenche a tabela com os fornecedores encontrados
+                        response.fornecedores.forEach(function(fornecedor) {
+                            $('#fornecedor-list').append(`
+                                <tr data-id="${fornecedor.id}" class="fornecedor-row">
+                                    <td>${fornecedor.id}</td>
+                                    <td>${fornecedor.nome_fantasia}</td>
+                                    <td>${formatarCNPJ(fornecedor.cnpj)}</td>
+                                    <td class="${fornecedor.status ? 'ativo' : 'inativo'}">${fornecedor.status ? 'ATIVO' : 'INATIVO'}</td>
+                                    <td>
+                                        ${response.user_is_superuser ? `<button class="edit-btn" aria-label="Editar fornecedor" data-id="${fornecedor.id}">Editar</button>` : '<span title="Você não tem permissão para editar este fornecedor">🔒</span>'}
+                                    </td>
+                                </tr>
+                            `);
+                        });
+                    } else {
+                        $('#fornecedor-list').append('<tr><td colspan="5">Nenhum fornecedor encontrado.</td></tr>');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Erro ao buscar fornecedores:', xhr);
+                    $('#fornecedor-list').empty().append('<tr><td colspan="5">Erro ao buscar fornecedores.</td></tr>');
+                }
+            });
+        } else {
+            $('#fornecedor-list').empty(); // Limpa a tabela se o CNPJ não for válido
+        }
+    });
     // Evento para o botão principal (Cadastrar/Editar)
     $('.submit-btn').on('click', function(event) {
         event.preventDefault();
