@@ -151,21 +151,21 @@ button {
     font-size: 14px;
 }
 
-.submit-btn, .cadastrar-btn, .edit-btn, .confirm-yes-btn {
+.save-btn, .submit-btn, .cadastrar-btn, .edit-btn, .confirm-yes-btn {
     background-color: #4CAF50; /* Verde */
     color: white;
 }
 
-.submit-btn:hover, .cadastrar-btn:hover, .edit-btn:hover, .confirm-yes-btn:hover {
+.save-btn:hover, .submit-btn:hover, .cadastrar-btn:hover, .edit-btn:hover, .confirm-yes-btn:hover {
     background-color: #45a049; /* Verde mais escuro ao passar o mouse */
 }
 
-.cancel-btn {
+.confirm-no-btn, .cancel-btn {
     background-color: #f44336; /* Vermelho */
     color: white;
 }
 
-.cancel-btn:hover {
+.confirm-no-btn:hover, .cancel-btn:hover {
     background-color: #e53935; /* Vermelho mais escuro ao passar o mouse */
 }
 
