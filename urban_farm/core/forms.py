@@ -62,9 +62,8 @@ class ClienteForm(forms.ModelForm):
 class FuncionarioForm(forms.ModelForm):
     class Meta:
         model = Funcionario
-        fields = ('cpf', 'status', 'nome', 'endereco')
+        fields = ('cpf', 'nome', 'cargo', 'data_admissao', 'salario', 'status')
 
-    # Validação do CPF (formato 'XXX.XXX.XXX-XX')
     def clean_cpf(self):
         cpf = self.cleaned_data.get('cpf')
         if not re.match(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$', cpf):

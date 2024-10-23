@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Funcionários - Cadastro{% endblock %}
+
+{% block head %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles/funcionarios.css' %}">
+{% endblock %}
+
+{% load custom_filters %}
+
+{% block header %}
+<header class="header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <h1 class="title">Lista de Funcionários</h1>
+    <input type="text" placeholder="Digite CPF do funcionário" class="search-input" aria-label="Pesquisar funcionário pelo CPF">
+    <button id="openModal" class="cadastrar-funcionario" aria-label="Cadastrar novo funcionário">Cadastrar Funcionário</button>
+</header>
+{% endblock %}
+
+{% block content %}
+<main>
+    <table class="funcionarios-table" aria-label="Tabela de funcionários">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>NOME</th>
+                <th>CPF</th>
+                <th>CARGO</th>
+                <th>STATUS</th>
+                <th>AÇÃO</th>
+            </tr>
+        </thead>
+        <tbody id="funcionario-list">
+            {% for funcionario in funcionarios %}
+            <tr data-id="{{ funcionario.id }}" class="funcionario-row">
+                <td>{{ funcionario.id }}</td>
+                <td>{{ funcionario.nome }}</td>
+                <td>{{ funcionario.cpf|format_cpf }}</td>
+                <td>{{ funcionario.cargo }}</td>
+                <td class="{% if funcionario.status %}ativo{% else %}inativo{% endif %}">
+                    {{ funcionario.status|yesno:"ATIVO,INATIVO" }}
+                </td>
+                <td>
+                    {% if user.is_superuser %}
+                        <button class="edit-btn" aria-label="Editar funcionário" data-id="{{ funcionario.id }}">Editar</button>
+                    {% else %}
+                        <span title="Você não tem permissão para editar este funcionário">🔒</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">Nenhum funcionário cadastrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>    
+
+    <div id="modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-describedby="modal-description">
+        <div class="modal-content">
+            <button class="close" aria-label="Fechar modal">&times;</button>
+            <h2 id="modal-title">Cadastrar Funcionário</h2>
+
+            <form id="funcionarioForm" method="post" aria-labelledby="form-title">
+                {% csrf_token %}
+                <fieldset class="form-section">
+                    <legend>Dados do Funcionário</legend>
+                    <div class="form-grid">
+                        {% for field in form %}
+                        {% if field.name != "status" %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="input-error">{{ field.errors|escape }}</div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </fieldset>
+            
+                <fieldset class="form-section">
+                    <legend>Dados do Endereço</legend>
+                    <div class="form-grid">
+                        {% for field in endereco_form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                             {% if field.errors %}
+                            <div class="input-error">{{ field.errors|escape }}</div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+            
+                <button type="submit" class="submit-btn" aria-label="Cadastrar funcionário">Cadastrar</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    var cadastrar_funcionario_url = "{% url 'core:cadastrar_funcionario' %}";
+    var buscar_funcionario_url = "{% url 'core:buscar_funcionario' 0 %}".replace('/0/', '/');
+</script>
+<script src="{% static 'scripts/funcionarios.js' %}"></script>
+
+{% endblock %}

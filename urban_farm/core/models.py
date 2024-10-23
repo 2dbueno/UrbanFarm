@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Perfil(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -57,6 +58,9 @@ class Funcionario(models.Model):
     cpf = models.CharField(max_length=14, unique=True)
     status = models.BooleanField(default=True)
     nome = models.CharField(max_length=100)
+    cargo = models.CharField(max_length=50, default='Não informado')  # Adicionado default
+    data_admissao = models.DateField(default=timezone.now)  # Adicionado default
+    salario = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)  # Adicionado default
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
 
 from django.db import models

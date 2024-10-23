@@ -5,8 +5,8 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views import View
-from .models import Fornecedor, Monitoramento, Planta
-from .forms import FornecedorForm, EnderecoForm
+from .models import Fornecedor, Monitoramento, Planta, Funcionario
+from .forms import FornecedorForm, EnderecoForm, FuncionarioForm
 
 # Classe base para views relacionadas a fornecedores.
 # Essa classe contém métodos comuns que serão reutilizados em outras views.
@@ -193,3 +193,88 @@ class ProducaoView(LoginRequiredMixin, View):
         
         # Renderiza a template com o contexto das plantas
         return render(request, self.template_name, {'plantas': plantas})
+    
+class FuncionariosView(LoginRequiredMixin, View):
+    template_name = 'funcionarios.html'
+
+    def get(self, request):
+        funcionarios = Funcionario.objects.all()
+        form = FuncionarioForm()
+        endereco_form = EnderecoForm()
+        return render(request, self.template_name, {
+            'funcionarios': funcionarios,
+            'form': form,
+            'endereco_form': endereco_form
+        })
+
+    def post(self, request):
+        # Redireciona para a view de cadastro
+        return redirect('core:cadastrar_funcionario')
+    
+class CadastrarFuncionarioView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = FuncionarioForm()
+        endereco_form = EnderecoForm()
+        return render(request, 'funcionarios.html', {
+            'form': form,
+            'endereco_form': endereco_form
+        })
+
+    def post(self, request):
+        funcionario_form = FuncionarioForm(request.POST)
+        endereco_form = EnderecoForm(request.POST)
+
+        if funcionario_form.is_valid() and endereco_form.is_valid():
+            try:
+                endereco = endereco_form.save()
+                funcionario = funcionario_form.save(commit=False)
+                funcionario.endereco = endereco
+                funcionario.save()
+
+                return JsonResponse({
+                    'success': True,
+                    'funcionario': {
+                        'id': funcionario.id,
+                        'nome': funcionario.nome,
+                        'cpf': funcionario.cpf,
+                        'cargo': funcionario.cargo,
+                        'status': funcionario.status,
+                    }
+                })
+            except Exception as e:
+                return JsonResponse({
+                    'success': False,
+                    'errors': str(e)
+                }, status=400)
+        else:
+            errors = {**funcionario_form.errors, **endereco_form.errors}
+            return JsonResponse({
+                'success': False,
+                'errors': errors
+            }, status=400)
+
+class BuscarFuncionarioView(LoginRequiredMixin, View):
+    def get(self, request, funcionario_id):
+        funcionario = get_object_or_404(Funcionario, id=funcionario_id)
+        endereco = funcionario.endereco
+
+        return JsonResponse({
+            'funcionario': {
+                'cpf': funcionario.cpf,
+                'nome': funcionario.nome,
+                'cargo': funcionario.cargo,
+                'data_admissao': funcionario.data_admissao.strftime('%Y-%m-%d'),
+                'salario': str(funcionario.salario),
+                'status': funcionario.status,
+            },
+            'endereco': {
+                'cep': endereco.cep,
+                'endereco': endereco.endereco,
+                ' complemento': endereco.complemento,
+                'cidade': endereco.cidade,
+                'estado': endereco.estado,
+                'bairro': endereco.bairro,
+                'telefone': endereco.telefone,
+                'email': endereco.email,
+            }
+        })
