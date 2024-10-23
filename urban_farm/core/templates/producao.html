@@ -9,6 +9,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <h1 class="title">Tela de Produção</h1>
     <input type="text" class="search-input" id="search" placeholder="Buscar planta..." aria-label="Buscar planta">
+    
+    <select id="stage-filter" class="stage-filter" aria-label="Filtro de Estágio">
+        <option value="">Todos os Estágios</option>
+        <option value="GERMINACAO">Germinação</option>
+        <option value="PLANTULA">Plântula</option>
+        <option value="VEGETATIVO">Vegetativo</option>
+        <option value="FLORACAO">Floração</option>
+        <option value="FRUTIFICACAO">Frutificação</option>
+        <option value="COLHEITA">Colheita</option>
+    </select>
 </header>
 {% endblock %}
 
@@ -27,7 +37,7 @@
             </thead>
             <tbody id="plant-table-body">
                 {% for planta in plantas %}
-                <tr>
+                <tr data-estagio="{{ planta.estagio }}">
                     <td>{{ planta.nome }}</td>
                     <td>{{ planta.data_plantio }}</td>
                     <td>{{ planta.quantidade_plantada }}</td>
@@ -44,34 +54,6 @@
     </div>
 </main>
 
-<!-- Adicionando link ao CSS específico de produção -->
 <link rel="stylesheet" href="{% static 'styles/producao.css' %}">
-
-<script>
-    function filterPlants() {
-        const input = document.getElementById('search');
-        const filter = input.value.toLowerCase();
-        const tableBody = document.getElementById('plant-table-body');
-        const rows = tableBody.getElementsByTagName('tr');
-
-        for (let i = 0; i < rows.length; i++) {
-            const cells = rows[i].getElementsByTagName('td');
-            let found = false;
-
-            for (let j = 0; j < cells.length; j++) {
-                const cell = cells[j];
-                if (cell) {
-                    if (cell.textContent.toLowerCase().includes(filter)) {
-                        found = true;
-                        break;
-                    }
-                }
-            }
-
-            rows[i].style.display = found ? '' : 'none';
-        }
-    }
-
-    document.getElementById('search').addEventListener('keyup', filterPlants);
-</script>
+<script src="{% static 'scripts/producao.js' %}"></script>
 {% endblock %}
