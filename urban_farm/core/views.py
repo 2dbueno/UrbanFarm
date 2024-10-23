@@ -184,9 +184,12 @@ class DeletarFornecedorView(LoginRequiredMixin, UserPassesTestMixin, View):
         fornecedor.delete()
         return JsonResponse({'success': True})
 
-def ProducaoView(request):
-    # Obtém todas as plantas do banco de dados
-    plantas = Planta.objects.all()
-    
-    # Renderiza a template com o contexto das plantas
-    return render(request, 'producao.html', {'plantas': plantas})
+class ProducaoView(LoginRequiredMixin, View):
+    template_name = 'producao.html'
+
+    def get(self, request):
+        # Obtém todas as plantas do banco de dados
+        plantas = Planta.objects.all()
+        
+        # Renderiza a template com o contexto das plantas
+        return render(request, self.template_name, {'plantas': plantas})
