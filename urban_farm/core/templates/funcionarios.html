@@ -2,11 +2,8 @@
 
 {% block title %}Funcionários - Cadastro{% endblock %}
 
-{% block head %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'styles/funcionarios.css' %}">
-{% endblock %}
-
+<link rel="stylesheet" href="{% static 'styles/fornecedores.css' %}">
 {% load custom_filters %}
 
 {% block header %}
@@ -20,7 +17,7 @@
 
 {% block content %}
 <main>
-    <table class="funcionarios-table" aria-label="Tabela de funcionários">
+    <table class="fornecedores-table" aria-label="Tabela de funcionários">
         <thead>
             <tr>
                 <th>ID</th>
@@ -33,7 +30,7 @@
         </thead>
         <tbody id="funcionario-list">
             {% for funcionario in funcionarios %}
-            <tr data-id="{{ funcionario.id }}" class="funcionario-row">
+            <tr data-id="{{ funcionario.id }}" class="fornecedor-row">
                 <td>{{ funcionario.id }}</td>
                 <td>{{ funcionario.nome }}</td>
                 <td>{{ funcionario.cpf|format_cpf }}</td>
@@ -80,7 +77,7 @@
                         {% endfor %}
                     </div>
                 </fieldset>
-            
+                
                 <fieldset class="form-section">
                     <legend>Dados do Endereço</legend>
                     <div class="form-grid">
@@ -88,25 +85,38 @@
                         <div class="form-group">
                             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                             {{ field }}
-                             {% if field.errors %}
+                            {% if field.errors %}
                             <div class="input-error">{{ field.errors|escape }}</div>
                             {% endif %}
                         </div>
                         {% endfor %}
                     </div>
                 </fieldset>
-            
-                <button type="submit" class="submit-btn" aria-label="Cadastrar funcionário">Cadastrar</button>
+                
+                <fieldset class="form-section">
+                    <legend>Status do Funcionário</legend>
+                    <div class="form-group">
+                        <label for="status">Ativo</label>
+                        <label class="switch">
+                            <input type="checkbox" name="status" id="status" {% if form.instance.status %}checked{% endif %} {% if not user.is_superuser %}disabled{% endif %}>
+                            <span class="slider round"></span>
+                        </label>
+                        <small class="status-description">Use o botão para ativar ou desativar o funcionário</small>
+                    </div>
+                </fieldset>
+
+                <div class="form-submit">
+                    <button type="submit" class="submit-btn">Cadastrar</button>
+                </div>
             </form>
         </div>
     </div>
 </main>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https:// ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{% static 'scripts/funcionarios.js' %}"></script>
 <script>
     var cadastrar_funcionario_url = "{% url 'core:cadastrar_funcionario' %}";
     var buscar_funcionario_url = "{% url 'core:buscar_funcionario' 0 %}".replace('/0/', '/');
 </script>
-<script src="{% static 'scripts/funcionarios.js' %}"></script>
-
 {% endblock %}
