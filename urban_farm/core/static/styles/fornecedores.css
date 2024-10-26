@@ -8,6 +8,20 @@ html, body {
     background-color: #fff; /* Ajuste o background se necessário */
 }
 
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="tel"],
+textarea {
+    padding: 10px; /* Aumenta o padding para aumentar a altura */
+    font-size: 16px; /* Tamanho da fonte */
+    border: 1px solid #ccc; /* Borda */
+    border-radius: 4px; /* Bordas arredondadas */
+    box-sizing: border-box; /* Inclui padding e border na largura total */
+    width: 100%; /* Faz com que o input ocupe toda a largura disponível */
+    margin-bottom: 3px; /* Espaçamento entre inputs */
+}
+
 .main-content {
     padding: 0;
 }
