@@ -34,19 +34,20 @@ window.onclick = function(event) {
 }
 
 $(document).ready(function() {
-    // Evento de submit do formulário
-    $('#funcionarioForm').on('submit', function(event) {
-        event.preventDefault(); // Previne o comportamento padrão do formulário
+    $('#funcionarioForm').on('submit', function(e) {
+        e.preventDefault();
         
-        // Obtém os dados do formulário
-        var formData = $(this).serialize();
+        // Adiciona o status do checkbox aos dados do formulário
+        var formData = new FormData(this);
+        formData.append('status', $('#status').is(':checked'));
         
         $.ajax({
             type: 'POST',
-            url: cadastrar_funcionario_url,  // Usa a URL definida no template
-            data: formData,
+            url: cadastrar_funcionario_url,
+            data: new URLSearchParams(formData).toString(),
             headers: {
-                'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()
+                'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val(),
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
             success: function(response) {
                 if (response.success) {
@@ -59,10 +60,8 @@ $(document).ready(function() {
                             <td>${response.funcionario.id}</td>
                             <td>${response.funcionario.nome}</td>
                             <td>${formatarCPF(response.funcionario.cpf)}</td>
-                            <td>${response.funcionario.cargo}</t d>
-                            <td class="${statusClass}">
-                                ${statusText}
-                            </td>
+                            <td>${response.funcionario.cargo}</td>
+                            <td class="${statusClass}">${statusText}</td>
                             <td>
                                 <button class="edit-btn" data-id="${response.funcionario.id}">Editar</button>
                             </td>
@@ -70,7 +69,7 @@ $(document).ready(function() {
                     `);
                     
                     // Fecha o modal e limpa o formulário
-                    document.getElementById("modal").style.display = "none";
+                    $('#modal').hide();
                     $('#funcionarioForm')[0].reset();
                     
                     // Mostra mensagem de sucesso
@@ -78,18 +77,20 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr) {
-                console.log('Erro:', xhr);  // Para debug
+                console.error('Erro:', xhr);
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    // Limpa mensagens de erro anteriores
                     $('.error-message').remove();
                     $('input, select').removeClass('input-error');
-
-                    // Exibe os erros no formulário
-                    Object.keys(xhr.responseJSON.errors).forEach(function(key) {
-                        const input = $(`[name="${key}"]`);
-                        input.addClass('input-error');
-                        input.after(`<div class="error-message">${xhr.responseJSON.errors[key]}</div>`);
-                    });
+                    
+                    if (typeof xhr.responseJSON.errors === 'string') {
+                        alert(xhr.responseJSON.errors);
+                    } else {
+                        Object.keys(xhr.responseJSON.errors).forEach(function(key) {
+                            const input = $(`[name="${key}"]`);
+                            input.addClass('input-error');
+                            input.after(`<div class="error-message">${xhr.responseJSON.errors[key]}</div>`);
+                        });
+                    }
                 }
             }
         });

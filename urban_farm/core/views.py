@@ -212,20 +212,16 @@ class FuncionariosView(LoginRequiredMixin, View):
         return redirect('core:cadastrar_funcionario')
     
 class CadastrarFuncionarioView(LoginRequiredMixin, View):
-    def get(self, request):
-        form = FuncionarioForm()
-        endereco_form = EnderecoForm()
-        return render(request, 'funcionarios.html', {
-            'form': form,
-            'endereco_form': endereco_form
-        })
-
     def post(self, request):
-        funcionario_form = FuncionarioForm(request.POST)
-        endereco_form = EnderecoForm(request.POST)
+        try:
+            # Converte o status para boolean
+            request.POST = request.POST.copy()
+            request.POST['status'] = request.POST.get('status') == 'true'
+            
+            funcionario_form = FuncionarioForm(request.POST)
+            endereco_form = EnderecoForm(request.POST)
 
-        if funcionario_form.is_valid() and endereco_form.is_valid():
-            try:
+            if funcionario_form.is_valid() and endereco_form.is_valid():
                 endereco = endereco_form.save()
                 funcionario = funcionario_form.save(commit=False)
                 funcionario.endereco = endereco
@@ -241,17 +237,20 @@ class CadastrarFuncionarioView(LoginRequiredMixin, View):
                         'status': funcionario.status,
                     }
                 })
-            except Exception as e:
+            else:
+                errors = {}
+                errors.update(funcionario_form.errors)
+                errors.update(endereco_form.errors)
                 return JsonResponse({
                     'success': False,
-                    'errors': str(e)
+                    'errors': errors
                 }, status=400)
-        else:
-            errors = {**funcionario_form.errors, **endereco_form.errors}
+                
+        except Exception as e:
             return JsonResponse({
                 'success': False,
-                'errors': errors
-            }, status=400)
+                'errors': str(e)
+            }, status=500)
 
 class BuscarFuncionarioView(LoginRequiredMixin, View):
     def get(self, request, funcionario_id):

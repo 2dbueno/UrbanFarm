@@ -112,11 +112,10 @@
         </div>
     </div>
 </main>
-
-<script src="https:// ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="{% static 'scripts/funcionarios.js' %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     var cadastrar_funcionario_url = "{% url 'core:cadastrar_funcionario' %}";
     var buscar_funcionario_url = "{% url 'core:buscar_funcionario' 0 %}".replace('/0/', '/');
 </script>
+<script src="{% static 'scripts/funcionarios.js' %}"></script>
 {% endblock %}
