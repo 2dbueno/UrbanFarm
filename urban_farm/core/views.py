@@ -269,7 +269,7 @@ class BuscarFuncionarioView(LoginRequiredMixin, View):
             'endereco': {
                 'cep': endereco.cep,
                 'endereco': endereco.endereco,
-                ' complemento': endereco.complemento,
+                'complemento': endereco.complemento,
                 'cidade': endereco.cidade,
                 'estado': endereco.estado,
                 'bairro': endereco.bairro,
@@ -277,3 +277,23 @@ class BuscarFuncionarioView(LoginRequiredMixin, View):
                 'email': endereco.email,
             }
         })
+    
+class EditarFuncionarioView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def get(self, request, funcionario_id):
+        funcionario = get_object_or_404(Funcionario, id=funcionario_id)
+        form = FuncionarioForm(instance=funcionario)
+        return render(request, 'funcionario.html', {'form': form, 'funcionario': funcionario})
+
+    def post(self, request, funcionario_id):
+        funcionario = get_object_or_404(Funcionario, id=funcionario_id)
+        funcionario_form = FuncionarioForm(request.POST, instance=funcionario)
+
+        if funcionario_form.is_valid():
+            funcionario_form.save()
+            return JsonResponse({'success': True})
+        else:
+            errors = funcionario_form.errors
+            return JsonResponse({'success': False, 'errors': errors}, status=400)

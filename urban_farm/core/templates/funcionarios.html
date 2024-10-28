@@ -1,9 +1,10 @@
+<!-- core/templates/funcionarios.html -->
 {% extends 'base.html' %}
 
 {% block title %}Funcionários - Cadastro{% endblock %}
 
 {% load static %}
-<link rel="stylesheet" href="{% static 'styles/fornecedores.css' %}">
+<link rel="stylesheet" href="{% static 'styles/funcionarios.css' %}">
 {% load custom_filters %}
 
 {% block header %}
@@ -17,7 +18,7 @@
 
 {% block content %}
 <main>
-    <table class="fornecedores-table" aria-label="Tabela de funcionários">
+    <table class="funcionarios-table" aria-label="Tabela de funcionários">
         <thead>
             <tr>
                 <th>ID</th>
@@ -30,7 +31,7 @@
         </thead>
         <tbody id="funcionario-list">
             {% for funcionario in funcionarios %}
-            <tr data-id="{{ funcionario.id }}" class="fornecedor-row">
+            <tr data-id="{{ funcionario.id }}" class="funcionario-row">
                 <td>{{ funcionario.id }}</td>
                 <td>{{ funcionario.nome }}</td>
                 <td>{{ funcionario.cpf|format_cpf }}</td>
@@ -54,12 +55,12 @@
         </tbody>
     </table>    
 
-    <div id="modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-describedby="modal-description">
+    <div id="modal" class="modal" role="dialog" aria-labelledby="modal-title">
         <div class="modal-content">
             <button class="close" aria-label="Fechar modal">&times;</button>
             <h2 id="modal-title">Cadastrar Funcionário</h2>
 
-            <form id="funcionarioForm" method="post" aria-labelledby="form-title">
+            <form id="funcionarioForm" method="post">
                 {% csrf_token %}
                 <fieldset class="form-section">
                     <legend>Dados do Funcionário</legend>
@@ -77,7 +78,7 @@
                         {% endfor %}
                     </div>
                 </fieldset>
-                
+
                 <fieldset class="form-section">
                     <legend>Dados do Endereço</legend>
                     <div class="form-grid">
@@ -92,13 +93,13 @@
                         {% endfor %}
                     </div>
                 </fieldset>
-                
+
                 <fieldset class="form-section">
                     <legend>Status do Funcionário</legend>
                     <div class="form-group">
                         <label for="status">Ativo</label>
                         <label class="switch">
-                            <input type="checkbox" name="status" id="status" {% if form.instance.status %}checked{% endif %} {% if not user.is_superuser %}disabled{% endif %}>
+                            <input type="checkbox" name="status" id="status" {% if form.instance.status %}checked{% endif %}>
                             <span class="slider round"></span>
                         </label>
                         <small class="status-description">Use o botão para ativar ou desativar o funcionário</small>
@@ -106,16 +107,34 @@
                 </fieldset>
 
                 <div class="form-submit">
-                    <button type="submit" class="submit-btn">Cadastrar</button>
+                    <button type="button" class="submit-btn">Cadastrar</button>
+                </div>
+                
+                <div class="edit-buttons" style="display: none;">
+                    <button type="button" class="save-btn">Salvar</button>
+                    <button type="button" class="cancel-btn">Cancelar</button>
                 </div>
             </form>
         </div>
     </div>
+
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirmação</h2>
+            <p>Tem certeza de que deseja realizar essa ação?</p>
+            <div class="confirm-buttons">
+                <button type="button" class="confirm-yes-btn">Sim</button>
+                <button type="button" class="confirm-no-btn">Não</button>
+            </div>
+        </div>
+    </div>
 </main>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     var cadastrar_funcionario_url = "{% url 'core:cadastrar_funcionario' %}";
     var buscar_funcionario_url = "{% url 'core:buscar_funcionario' 0 %}".replace('/0/', '/');
+    var editar_funcionario_url = "{% url 'core:editar_funcionario' '0' %}".replace('/0/', '/');
 </script>
 <script src="{% static 'scripts/funcionarios.js' %}"></script>
 {% endblock %}

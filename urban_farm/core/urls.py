@@ -3,7 +3,7 @@ from .views import (
     LoginView, MonitoramentoView, FornecedoresView, LogoutView, 
     CadastrarFornecedorView, BuscarFornecedorView, EditarFornecedorView,
     BuscarFornecedorPorCNPJView, ProducaoView, FuncionariosView, 
-    CadastrarFuncionarioView, BuscarFuncionarioView
+    CadastrarFuncionarioView, BuscarFuncionarioView, EditarFuncionarioView
 )
 
 app_name = 'core'
@@ -22,4 +22,5 @@ urlpatterns = [
     path('funcionarios/', FuncionariosView.as_view(), name='funcionarios'),
     path('funcionarios/cadastrar/', CadastrarFuncionarioView.as_view(), name='cadastrar_funcionario'),
     path('funcionarios/<int:funcionario_id>/', BuscarFuncionarioView.as_view(), name='buscar_funcionario'),
+    path('funcionarios/editar/<int:funcionario_id>/', EditarFuncionarioView.as_view(), name='editar_funcionario'),
 ]
