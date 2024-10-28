@@ -4,7 +4,6 @@
 {% block title %}Funcionários - Cadastro{% endblock %}
 
 {% load static %}
-<link rel="stylesheet" href="{% static 'styles/funcionarios.css' %}">
 {% load custom_filters %}
 
 {% block header %}
@@ -17,6 +16,8 @@
 {% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'styles/funcionarios.css' %}">
+
 <main>
     <table class="funcionarios-table" aria-label="Tabela de funcionários">
         <thead>
@@ -53,7 +54,7 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>    
+    </table>
 
     <div id="modal" class="modal" role="dialog" aria-labelledby="modal-title">
         <div class="modal-content">
