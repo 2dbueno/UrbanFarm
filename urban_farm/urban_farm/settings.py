@@ -6,7 +6,17 @@ SECRET_KEY = 'django-insecure-+l&i-!je5oxbg4f8zl0i90+v!3tn#83=a_hs+(6iav#7a-96$r
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '127.0.0.1:8000']
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1', 
+    'c99c-191-201-118-235.ngrok-free.app'
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://c99c-191-201-118-235.ngrok-free.app'
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -29,8 +39,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'urban_farm.urls'
 
