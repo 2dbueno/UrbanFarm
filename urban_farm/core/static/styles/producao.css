@@ -23,25 +23,6 @@
     border: 1px solid #ddd;
 }
 
-/* Responsividade */
-@media screen and (max-width: 768px) {
-    .fornecedores-table th, .fornecedores-table td {
-        font-size: 14px;
-        padding: 8px;
-    }
-
-    /* Ajustando o input de busca */
-    .search-input {
-        width: 100%;
-        font-size: 14px;
-    }
-
-    /* Formatando data com "/" em resoluções menores */
-    .fornecedores-table td:nth-child(2), .fornecedores-table td:nth-child(5) {
-        font-size: 14px;
-    }
-}
-
 /* Sobrescrevendo estilos de fornecedores, se necessário */
 .fornecedores-table th, .fornecedores-table td {
     text-align: center; /* Força a centralização apenas na tela de produção */
@@ -55,8 +36,8 @@
     font-size: 16px;
     border-radius: 4px;
     border: 1px solid #ccc;
-    background-color: #f9f9f9; /* Cor de fundo */
-    color: #333; /* Cor do texto */
+    background-color: #f9f9f9;
+    color: #333;
     appearance: none; /* Remove o estilo padrão do select */
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23333"><path d="M7 10l5 5 5-5z"/></svg>'); /* Adiciona um ícone de seta */
     background-repeat: no-repeat;
@@ -69,9 +50,30 @@
 .stage-filter:focus {
     border-color: #007BFF; /* Cor da borda ao focar */
     outline: none; /* Remove o contorno padrão */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Sombra ao focar */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 .stage-filter option {
     padding: 10px; /* Espaçamento nas opções */
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+    .fornecedores-table th:nth-child(2), /* Oculta a coluna "Data de Plantio" */
+    .fornecedores-table td:nth-child(2),
+    .fornecedores-table th:nth-child(5), /* Oculta a coluna "Data de Colheita Estimada" */
+    .fornecedores-table td:nth-child(5) {
+        display: none; /* Oculta as colunas */
+    }
+
+    .fornecedores-table th, .fornecedores-table td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    /* Ajustando o input de busca */
+    .search-input {
+        width: 100%;
+        font-size: 14px;
+    }
 }
