@@ -17,12 +17,6 @@
     border-collapse: collapse;
 }
 
-.fornecedores-table th, .fornecedores-table td {
-    padding: 12px;
-    text-align: center;
-    border: 1px solid #ddd;
-}
-
 /* Sobrescrevendo estilos de fornecedores, se necessário */
 .fornecedores-table th, .fornecedores-table td {
     text-align: center; /* Força a centralização apenas na tela de produção */
@@ -69,6 +63,7 @@
     .fornecedores-table th, .fornecedores-table td {
         font-size: 14px;
         padding: 8px;
+        border: 1px solid #ddd; /* Cria bordas para facilitar no mobile */        
     }
 
     /* Ajustando o input de busca */
