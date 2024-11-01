@@ -297,3 +297,107 @@ class EditarFuncionarioView(LoginRequiredMixin, UserPassesTestMixin, View):
         else:
             errors = funcionario_form.errors
             return JsonResponse({'success': False, 'errors': errors}, status=400)
+        
+
+
+
+# core/views.py
+
+from django.shortcuts import get_object_or_404, redirect, render
+from django.http import JsonResponse
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from .models import Cliente
+from .forms import ClienteForm, EnderecoForm
+
+class ClientesView(LoginRequiredMixin, View):
+    template_name = 'clientes.html'
+
+    def get(self, request):
+        clientes = Cliente.objects.all()
+        form = ClienteForm()
+        endereco_form = EnderecoForm()
+        return render(request, self.template_name, {
+            'clientes': clientes,
+            'form': form,
+            'endereco_form': endereco_form
+        })
+
+    def post(self, request):
+        return redirect('core:cadastrar_cliente')
+
+class CadastrarClienteView(LoginRequiredMixin, View):
+    def post(self, request):
+        try:
+            request.POST = request.POST.copy()
+            request.POST['status'] = request.POST.get('status') == 'true'
+            
+            cliente_form = ClienteForm(request.POST)
+            endereco_form = EnderecoForm(request.POST)
+
+            if cliente_form.is_valid() and endereco_form.is_valid():
+                endereco = endereco_form.save()
+                cliente = cliente_form.save(commit=False)
+                cliente.endereco = endereco
+                cliente.save()
+
+                return JsonResponse({
+                    'success': True,
+                    'cliente': {
+                        'id': cliente.id,
+                        'nome': cliente.nome,
+                        'cpf': cliente.cpf,
+                        'status': cliente.status,
+                    }
+                })
+            else:
+                errors = {}
+                errors.update(cliente_form.errors)
+                errors.update(endereco_form.errors)
+                return JsonResponse({'success': False, 'errors': errors}, status=400)
+                
+        except Exception as e:
+            return JsonResponse({'success': False, 'errors': str(e)}, status=500)
+
+class BuscarClienteView(LoginRequiredMixin, View):
+    def get(self, request, cliente_id):
+        cliente = get_object_or_404(Cliente, id=cliente_id)
+        endereco = cliente.endereco
+
+        return JsonResponse({
+            'cliente': {
+                'cpf': cliente.cpf,
+                'nome': cliente.nome,
+                'status': cliente.status,
+            },
+            'endereco': {
+                'cep': endereco.cep,
+                'endereco': endereco.endereco,
+                'complemento': endereco.complemento,
+                'cidade': endereco.cidade,
+                'estado': endereco.estado,
+                'bairro': endereco.bairro,
+                'telefone': endereco.telefone,
+                'email': endereco.email,
+            }
+        })
+
+class EditarClienteView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def get(self, request, cliente_id):
+        cliente = get_object_or_404(Cliente, id=cliente_id)
+        form = ClienteForm(instance=cliente)
+        return render(request, 'cliente.html', {'form': form, 'cliente': cliente})
+
+    def post(self, request, cliente_id):
+        cliente = get_object_or_404(Cliente, id=cliente_id)
+        cliente_form = ClienteForm(request.POST, instance=cliente)
+
+        if cliente_form.is_valid():
+            cliente_form.save()
+            return JsonResponse({'success': True})
+        else:
+            errors = cliente_form.errors
+            return JsonResponse({'success': False, 'errors': errors}, status=400)

@@ -23,6 +23,7 @@
             <li><a href="{% url 'core:monitoramento' %}">Monitoramento</a></li>
             <li><a href="{% url 'core:fornecedores' %}">Fornecedores</a></li>
             <li><a href="{% url 'core:producao' %}">Producao</a></li>
+            <li><a href="{% url 'core:clientes' %}">Clientes</a></li>
             {% if user.is_superuser %}
             <li>
               <a href="{% url 'core:funcionarios' %}">Funcionários</a>

@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}Clientes - Cadastro{% endblock %}
+
+{% load static %}
+{% load custom_filters %}
+
+{% block header %}
+<header class="header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <h1 class="title">Lista de Clientes</h1>
+    <input type="text" placeholder="Digite CPF do cliente" class="search-input" aria-label="Pesquisar cliente pelo CPF">
+    <button id="openModal" class="cadastrar-cliente" aria-label="Cadastrar novo cliente">Cadastrar Cliente</button>
+</header>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'styles/clientes.css' %}">
+
+<main>
+    <table class="clientes-table" aria-label="Tabela de clientes">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>NOME</th>
+                <th>CPF</th>
+                <th>STATUS</th>
+                <th>AÇÃO</th>
+            </tr>
+        </thead>
+        <tbody id="cliente-list">
+            {% for cliente in clientes %}
+            <tr data-id="{{ cliente.id }}" class="cliente-row">
+                <td>{{ cliente.id }}</td>
+                <td>{{ cliente.nome }}</td>
+                <td>{{ cliente.cpf|format_cpf }}</td>
+                <td class="{% if cliente.status %}ativo{% else %}inativo{% endif %}">
+                    {{ cliente.status|yesno:"ATIVO,INATIVO" }}
+                </td>
+                <td>
+                    {% if user.is_superuser %}
+                        <button class="edit-btn" aria-label="Editar cliente" data-id="{{ cliente.id }}">Editar</button>
+                    {% else %}
+                        <span title="Você não tem permissão para editar este cliente">🔒</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">Nenhum cliente cadastrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div id="modal" class="modal" role="dialog" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <button class="close" aria-label="Fechar modal">&times;</button>
+            <h2 id="modal-title">Cadastrar Cliente</h2>
+
+            <form id="clienteForm" method="post">
+                {% csrf_token %}
+                <fieldset class="form-section">
+                    <legend>Dados do Cliente</legend>
+                    <div class="form-grid">
+                        {% for field in form %}
+                        {% if field.name != "status" %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="input-error">{{ field.errors|escape }}</div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section">
+                    <legend>Dados do Endereço</legend>
+                    <div class="form-grid">
+                        {% for field in endereco_form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="input-error">{{ field.errors|escape }}</div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section">
+                    <legend>Status do Cliente</legend>
+                    <div class="form-group">
+                        <label for="status">Ativo</label>
+                        <label class="switch">
+                            <input type="checkbox" name="status" id="status" {% if form.instance.status %}checked{% endif %}>
+                            <span class="slider round"></span>
+                        </label>
+                        <small class="status-description">Use o botão para ativar ou desativar o cliente</small>
+                    </div>
+                </fieldset>
+
+                <div class="form-submit">
+                    <button type="button" class="submit-btn">Cadastrar</button>
+                </div>
+                
+                <div class="edit-buttons" style="display: none;">
+                    <button type="button" class="save-btn">Salvar</button>
+                    <button type="button" class="cancel-btn">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirmação</h2>
+            <p>Tem certeza de que deseja realizar essa ação?</p>
+            <div class="confirm-buttons">
+                <button type="button" class="confirm-yes-btn">Sim</button>
+                <button type="button" class="confirm-no-btn">Não</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    var cadastrar_cliente_url = "{% url 'core:cadastrar_cliente' %}";
+    var buscar_cliente_url = "{% url 'core:buscar_cliente' 0 %}".replace('/0/', '/');
+    var editar_cliente_url = "{% url 'core:editar_cliente' '0' %}".replace('/0/', '/');
+</script>
+<script src="{% static 'scripts/clientes.js' %}"></script>
+{% endblock %}

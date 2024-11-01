@@ -50,7 +50,7 @@ class FornecedorForm(forms.ModelForm):
 class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
-        fields = ('cpf', 'status', 'nome', 'endereco')
+        fields = ('cpf', 'status', 'nome')
 
     # Validação do CPF (formato 'XXX.XXX.XXX-XX')
     def clean_cpf(self):

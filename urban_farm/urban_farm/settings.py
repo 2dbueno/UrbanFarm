@@ -9,11 +9,11 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost', 
     '127.0.0.1', 
-    'c99c-191-201-118-235.ngrok-free.app'
+    '503e-191-201-118-235.ngrok-free.app'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://c99c-191-201-118-235.ngrok-free.app'
+    'https://503e-191-201-118-235.ngrok-free.app'
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
