@@ -53,6 +53,39 @@
     background-color: #168f32;
 }
 
+/* Estilos para o select de tipo de cliente */
+select.form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+/* Estilos para os campos específicos de cada tipo */
+.pessoa-fisica,
+.pessoa-juridica {
+    transition: all 0.3s ease;
+}
+
+/* Estilos para campos obrigatórios */
+.required-field::after {
+    content: "*";
+    color: red;
+    margin-left: 4px;
+}
+
+/* Estilos para campos com erro */
+.input-error {
+    border-color: #dc3545;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 4px;
+}
+
 /* Responsividade */
 @media screen and (max-width: 768px) {
     .clientes-table {

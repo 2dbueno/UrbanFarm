@@ -47,11 +47,46 @@ class Fornecedor(models.Model):
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
 
 class Cliente(models.Model):
+    TIPO_CHOICES = [
+        ('PF', 'Pessoa Física'),
+        ('PJ', 'Pessoa Jurídica')
+    ]
+
     id = models.AutoField(primary_key=True)
-    cpf = models.CharField(max_length=14, unique=True)
+    tipo = models.CharField(max_length=2, choices=TIPO_CHOICES, default='PF')  # Adiciona default='PF'
+    cpf = models.CharField(max_length=14, unique=True, null=True, blank=True)
+    cnpj = models.CharField(max_length=18, unique=True, null=True, blank=True)
     status = models.BooleanField(default=True)
-    nome = models.CharField(max_length=100)
+    nome = models.CharField(max_length=100, blank=True)  # Permitir vazio
+    razao_social = models.CharField(max_length=100, null=True, blank=True)  # Para PJ
+    nome_fantasia = models.CharField(max_length=100, null=True, blank=True)  # Para PJ
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        
+        # Validação para Pessoa Física
+        if self.tipo == 'PF':
+            if not self.cpf:
+                raise ValidationError('CPF é obrigatório para Pessoa Física')
+            if self.cnpj:
+                raise ValidationError('CNPJ não deve ser preenchido para Pessoa Física')
+            if self.razao_social or self.nome_fantasia:
+                raise ValidationError('Razão Social e Nome Fantasia não devem ser preenchidos para Pessoa Física')
+
+        # Validação para Pessoa Jurídica
+        if self.tipo == 'PJ':
+            if not self.cnpj:
+                raise ValidationError('CNPJ é obrigatório para Pessoa Jurídica')
+            if self.cpf:
+                raise ValidationError('CPF não deve ser preenchido para Pessoa Jurídica')
+            if not self.razao_social or not self.nome_fantasia:
+                raise ValidationError('Razão Social e Nome Fantasia são obrigatórios para Pessoa Jurídica')
+
+    def __str__(self):
+        if self.tipo == 'PF':
+            return f"{self.nome} (CPF: {self.cpf})"
+        return f"{self.nome_fantasia} (CNPJ: {self.cnpj})"
 
 class Funcionario(models.Model):
     id = models.AutoField(primary_key=True)

@@ -50,15 +50,34 @@ class FornecedorForm(forms.ModelForm):
 class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
-        fields = ('cpf', 'status', 'nome')
+        fields = ('tipo', 'cpf', 'cnpj', 'nome', 'razao_social', 'nome_fantasia', 'status')
 
-    # Validação do CPF (formato 'XXX.XXX.XXX-XX')
-    def clean_cpf(self):
-        cpf = self.cleaned_data.get('cpf')
-        if not re.match(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$', cpf):
-            raise ValidationError("O CPF deve estar no formato 'XXX.XXX.XXX-XX'.")
-        return cpf
+    def clean(self):
+        cleaned_data = super().clean()
+        tipo = cleaned_data.get('tipo')
+        cpf = cleaned_data.get('cpf')
+        cnpj = cleaned_data.get('cnpj')
+        razao_social = cleaned_data.get('razao_social')
+        nome_fantasia = cleaned_data.get('nome_fantasia')
 
+        if tipo == 'PF':
+            if not cpf:
+                raise forms.ValidationError('CPF é obrigatório para Pessoa Física')
+            if cnpj:
+                raise forms.ValidationError('CNPJ não deve ser preenchido para Pessoa Física')
+            if razao_social or nome_fantasia:
+                raise forms.ValidationError('Razão Social e Nome Fantasia não devem ser preenchidos para Pessoa Física')
+
+        elif tipo == 'PJ':
+            if not cnpj:
+                raise forms.ValidationError('CNPJ é obrigatório para Pessoa Jurídica')
+            if cpf:
+                raise forms.ValidationError('CPF não deve ser preenchido para Pessoa Jurídica')
+            if not razao_social or not nome_fantasia:
+                raise forms.ValidationError('Razão Social e Nome Fantasia são obrigatórios para Pessoa Jurídica')
+
+        return cleaned_data
+    
 class FuncionarioForm(forms.ModelForm):
     class Meta:
         model = Funcionario

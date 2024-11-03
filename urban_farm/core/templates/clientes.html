@@ -9,7 +9,7 @@
 <header class="header">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <h1 class="title">Lista de Clientes</h1>
-    <input type="text" placeholder="Digite CPF do cliente" class="search-input" aria-label="Pesquisar cliente pelo CPF">
+    <input type="text" placeholder="Digite CPF/CNPJ do cliente" class="search-input" aria-label="Pesquisar cliente pelo CPF/CNPJ">
     <button id="openModal" class="cadastrar-cliente" aria-label="Cadastrar novo cliente">Cadastrar Cliente</button>
 </header>
 {% endblock %}
@@ -22,8 +22,9 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>NOME</th>
-                <th>CPF</th>
+                <th>NOME/RAZÃO SOCIAL</th>
+                <th>CPF/CNPJ</th>
+                <th>TIPO</th>
                 <th>STATUS</th>
                 <th>AÇÃO</th>
             </tr>
@@ -32,8 +33,17 @@
             {% for cliente in clientes %}
             <tr data-id="{{ cliente.id }}" class="cliente-row">
                 <td>{{ cliente.id }}</td>
-                <td>{{ cliente.nome }}</td>
-                <td>{{ cliente.cpf|format_cpf }}</td>
+                <td>{{ cliente.nome|default:cliente.razao_social }}</td>
+                <td>
+                    {% if cliente.cpf %}
+                        {{ cliente.cpf|remove_format|format_cpf }}
+                    {% elif cliente.cnpj %}
+                        {{ cliente.cnpj|remove_format|format_cnpj }}
+                    {% else %}
+                        Não informado
+                    {% endif %}
+                </td>
+                <td>{{ cliente.get_tipo_display }}</td>
                 <td class="{% if cliente.status %}ativo{% else %}inativo{% endif %}">
                     {{ cliente.status|yesno:"ATIVO,INATIVO" }}
                 </td>
@@ -61,19 +71,46 @@
             <form id="clienteForm" method="post">
                 {% csrf_token %}
                 <fieldset class="form-section">
-                    <legend>Dados do Cliente</legend>
+                    <legend>Tipo de Cliente</legend>
+                    <div class="form-group">
+                        <label for="tipo">Tipo de Cliente</label>
+                        <select name="tipo" id="tipo" class="form-control" required>
+                            <option value="">Selecione o tipo</option>
+                            <option value="PF">Pessoa Física</option>
+                            <option value="PJ">Pessoa Jurídica</option>
+                        </select>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section pessoa-fisica">
+                    <legend>Dados Pessoais</legend>
                     <div class="form-grid">
-                        {% for field in form %}
-                        {% if field.name != "status" %}
                         <div class="form-group">
-                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {{ field }}
-                            {% if field.errors %}
-                            <div class="input-error">{{ field.errors|escape }}</div>
-                            {% endif %}
+                            <label for="nome">Nome Completo</label>
+                            <input type="text" name="nome" id="nome">
                         </div>
-                        {% endif %}
-                        {% endfor %}
+                        <div class="form-group">
+                            <label for="cpf">CPF</label>
+                            <input type="text" name="cpf" id="cpf">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section pessoa-juridica" style="display: none;">
+                    <legend>Dados Empresariais</legend>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="cnpj">CNPJ</label>
+                            <input type="text" name="cnpj" id="cnpj">
+                        </div>
+                        <div class="form-group">
+                            <label for="razao_social">Razão Social</label>
+                            <input type="text" name="razao_social" id="razao_social">
+                        </div>
+                        <div class="form-group">
+                            <label for="nome_fantasia">Nome Fantasia</label>
+                            <input type="text" name="nome_fantasia" id="nome_fantasia">
+                        </div>
                     </div>
                 </fieldset>
 
@@ -129,6 +166,7 @@
 </main>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 <script>
     var cadastrar_cliente_url = "{% url 'core:cadastrar_cliente' %}";
     var buscar_cliente_url = "{% url 'core:buscar_cliente' 0 %}".replace('/0/', '/');

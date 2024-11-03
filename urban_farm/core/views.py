@@ -330,7 +330,11 @@ class CadastrarClienteView(LoginRequiredMixin, View):
     def post(self, request):
         try:
             request.POST = request.POST.copy()
-            request.POST['status'] = request.POST.get('status') == 'true'
+            # Ajuste aqui para pegar o valor correto do checkbox
+            status_value = request.POST.get('status') == 'on'  # 'on' se o checkbox estiver marcado
+            request.POST['status'] = 1 if status_value else 0  # Define como 1 se True, caso contrário 0
+            
+            print("Dados recebidos:", request.POST)  # Log dos dados recebidos
             
             cliente_form = ClienteForm(request.POST)
             endereco_form = EnderecoForm(request.POST)
@@ -338,6 +342,8 @@ class CadastrarClienteView(LoginRequiredMixin, View):
             if cliente_form.is_valid() and endereco_form.is_valid():
                 endereco = endereco_form.save()
                 cliente = cliente_form.save(commit=False)
+                # Aqui, o status é definido a partir do formulário
+                cliente.status = bool(request.POST['status'])  # Converte para booleano
                 cliente.endereco = endereco
                 cliente.save()
 
@@ -354,9 +360,11 @@ class CadastrarClienteView(LoginRequiredMixin, View):
                 errors = {}
                 errors.update(cliente_form.errors)
                 errors.update(endereco_form.errors)
+                print("Erros de validação:", errors)  # Log dos erros de validação
                 return JsonResponse({'success': False, 'errors': errors}, status=400)
                 
         except Exception as e:
+            print("Erro:", e)  # Log do erro
             return JsonResponse({'success': False, 'errors': str(e)}, status=500)
 
 class BuscarClienteView(LoginRequiredMixin, View):
@@ -366,6 +374,7 @@ class BuscarClienteView(LoginRequiredMixin, View):
 
         return JsonResponse({
             'cliente': {
+                'tipo': cliente.tipo,  # Adicione o tipo aqui
                 'cpf': cliente.cpf,
                 'nome': cliente.nome,
                 'status': cliente.status,
