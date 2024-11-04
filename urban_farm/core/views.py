@@ -5,8 +5,8 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views import View
-from .models import Fornecedor, Monitoramento, Planta, Funcionario
-from .forms import FornecedorForm, EnderecoForm, FuncionarioForm
+from .models import Fornecedor, Monitoramento, Planta, Funcionario, Cliente
+from .forms import FornecedorForm, EnderecoForm, FuncionarioForm, ClienteForm
 
 # Classe base para views relacionadas a fornecedores.
 # Essa classe contém métodos comuns que serão reutilizados em outras views.
@@ -29,12 +29,13 @@ class LoginView(View):
         return render(request, self.template_name)
     
     def post(self, request):
-        # Autentica o usuário com base no nome de usuário e senha fornecidos.
+        # Autentica o usuário com base no username e password.
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request, user)  # Faz o login do usuário.
+            # Faz o login do usuário caso não logado.
+            login(request, user)
             return redirect('monitoramento/')
         else:
             # Se a autenticação falhar, retorna uma mensagem de erro.
@@ -154,7 +155,7 @@ class EditarFornecedorView(LoginRequiredMixin, UserPassesTestMixin, BaseForneced
         fornecedor_form = FornecedorForm(request.POST, instance=fornecedor)
 
         if fornecedor_form.is_valid():
-            fornecedor_form.save()  # Salva as alterações do fornecedor.
+            fornecedor_form.save()
             return JsonResponse({'success': True})
         else:
             # Retorna erros de validação, se houver.
@@ -208,9 +209,8 @@ class FuncionariosView(LoginRequiredMixin, View):
         })
 
     def post(self, request):
-        # Redireciona para a view de cadastro
         return redirect('core:cadastrar_funcionario')
-    
+
 class CadastrarFuncionarioView(LoginRequiredMixin, View):
     def post(self, request):
         try:
@@ -277,7 +277,7 @@ class BuscarFuncionarioView(LoginRequiredMixin, View):
                 'email': endereco.email,
             }
         })
-    
+
 class EditarFuncionarioView(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         return self.request.user.is_superuser
@@ -297,18 +297,6 @@ class EditarFuncionarioView(LoginRequiredMixin, UserPassesTestMixin, View):
         else:
             errors = funcionario_form.errors
             return JsonResponse({'success': False, 'errors': errors}, status=400)
-        
-
-
-
-# core/views.py
-
-from django.shortcuts import get_object_or_404, redirect, render
-from django.http import JsonResponse
-from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Cliente
-from .forms import ClienteForm, EnderecoForm
 
 class ClientesView(LoginRequiredMixin, View):
     template_name = 'clientes.html'
@@ -330,7 +318,6 @@ class CadastrarClienteView(LoginRequiredMixin, View):
     def post(self, request):
         try:
             request.POST = request.POST.copy()
-            # Ajuste aqui para pegar o valor correto do checkbox
             status_value = request.POST.get('status') == 'on'  # 'on' se o checkbox estiver marcado
             request.POST['status'] = 1 if status_value else 0  # Define como 1 se True, caso contrário 0
             
@@ -374,7 +361,7 @@ class BuscarClienteView(LoginRequiredMixin, View):
 
         return JsonResponse({
             'cliente': {
-                'tipo': cliente.tipo,  # Adicione o tipo aqui
+                'tipo': cliente.tipo,
                 'cpf': cliente.cpf,
                 'nome': cliente.nome,
                 'status': cliente.status,

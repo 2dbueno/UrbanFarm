@@ -9,7 +9,6 @@
     <meta name="keywords" content="login, Urban Farm, fazenda urbana, gerenciamento, usuário, senha">
     <meta name="robots" content="noindex, nofollow">
     <title>Login - Urban Farm</title>
-    <!-- Link para o arquivo CSS externo -->
     <link rel="stylesheet" href="{% static '/styles/login.css' %}">
 </head>
 <body>
@@ -21,12 +20,10 @@
                 <h1>{% block header %}Bem-vindo ao Urban Farm{% endblock %}</h1>
             </header>
 
-        <!-- Mensagem de erro, se houver -->
         {% if error_message %}
             <p class="error-message">{{ error_message }}</p>
         {% endif %}
 
-        <!-- Formulário de Login -->
         <form method="post">
             {% csrf_token %}
             <input type="text" id="username" name="username" placeholder="Login" required>

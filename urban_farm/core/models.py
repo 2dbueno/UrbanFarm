@@ -53,7 +53,7 @@ class Cliente(models.Model):
     ]
 
     id = models.AutoField(primary_key=True)
-    tipo = models.CharField(max_length=2, choices=TIPO_CHOICES, default='PF')  # Adiciona default='PF'
+    tipo = models.CharField(max_length=2, choices=TIPO_CHOICES, default='PF')
     cpf = models.CharField(max_length=14, unique=True, null=True, blank=True)
     cnpj = models.CharField(max_length=18, unique=True, null=True, blank=True)
     status = models.BooleanField(default=True)
@@ -98,8 +98,6 @@ class Funcionario(models.Model):
     salario = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
 
-from django.db import models
-
 class Planta(models.Model):
     ESTAGIOS_PLANTIO = [
         ('GERMINACAO', 'Germinação'),
@@ -112,9 +110,9 @@ class Planta(models.Model):
 
     nome = models.CharField(max_length=100)
     data_plantio = models.DateField()
-    quantidade_plantada = models.DecimalField(max_digits=10, decimal_places=2)  # Quantidade em kg
+    quantidade_plantada = models.DecimalField(max_digits=10, decimal_places=2)
     estagio = models.CharField(max_length=20, choices=ESTAGIOS_PLANTIO)
-    data_colheita_estimada = models.DateField(null=True, blank=True)  # Pode ser preenchida posteriormente
+    data_colheita_estimada = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return self.nome
@@ -122,4 +120,4 @@ class Planta(models.Model):
     class Meta:
         verbose_name = 'Planta'
         verbose_name_plural = 'Plantas'
-        ordering = ['data_plantio']  # Ordena pela data de plantio
+        ordering = ['data_plantio']

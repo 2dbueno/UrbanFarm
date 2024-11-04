@@ -1,5 +1,3 @@
-// dark-mode.js
-
 // Inicializa o modo escuro com base na preferência do usuário ou no tema do sistema
 function initDarkMode() {
     const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
