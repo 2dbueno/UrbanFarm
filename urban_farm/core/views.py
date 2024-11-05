@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views import View
-from .models import Fornecedor, Monitoramento, Planta, Funcionario, Cliente
+from .models import Fornecedor, Monitoramento, Planta, Funcionario, Cliente, Produto
 from .forms import FornecedorForm, EnderecoForm, FuncionarioForm, ClienteForm
 
 # Classe base para views relacionadas a fornecedores.
@@ -354,18 +354,34 @@ class CadastrarClienteView(LoginRequiredMixin, View):
             print("Erro:", e)  # Log do erro
             return JsonResponse({'success': False, 'errors': str(e)}, status=500)
 
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
+from .models import Cliente
+
 class BuscarClienteView(LoginRequiredMixin, View):
     def get(self, request, cliente_id):
         cliente = get_object_or_404(Cliente, id=cliente_id)
         endereco = cliente.endereco
 
+        # Cria um dicionário para o cliente
+        cliente_data = {
+            'tipo': cliente.tipo,
+            'status': cliente.status,
+        }
+
+        # Adiciona campos específicos de PF ou PJ
+        if cliente.tipo == 'PF':
+            cliente_data['cpf'] = cliente.cpf
+            cliente_data['nome'] = cliente.nome
+        elif cliente.tipo == 'PJ':
+            cliente_data['cnpj'] = cliente.cnpj
+            cliente_data['razao_social'] = cliente.razao_social
+            cliente_data['nome_fantasia'] = cliente.nome_fantasia
+
         return JsonResponse({
-            'cliente': {
-                'tipo': cliente.tipo,
-                'cpf': cliente.cpf,
-                'nome': cliente.nome,
-                'status': cliente.status,
-            },
+            'cliente': cliente_data,
             'endereco': {
                 'cep': endereco.cep,
                 'endereco': endereco.endereco,
@@ -377,7 +393,6 @@ class BuscarClienteView(LoginRequiredMixin, View):
                 'email': endereco.email,
             }
         })
-
 class EditarClienteView(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         return self.request.user.is_superuser
@@ -511,8 +526,6 @@ class BuscarVendaView(LoginRequiredMixin, View):
             })
         except Venda.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Venda não encontrada'}, status=404)
-
-from .models import Produto
 
 class ListarProdutosView(View):
     def get(self, request):

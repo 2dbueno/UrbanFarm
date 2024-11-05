@@ -137,6 +137,7 @@ $(document).ready(function() {
         var url = buscar_cliente_url + clienteId + '/';
 
         $.get(url, function(response) {
+            console.log(response)
             // Limpa mensagens de erro anteriores
             $('.error-message').remove();
             $('input, select').removeClass('input-error');
