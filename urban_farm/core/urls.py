@@ -4,9 +4,7 @@ from .views import (
     CadastrarFornecedorView, BuscarFornecedorView, EditarFornecedorView,
     BuscarFornecedorPorCNPJView, ProducaoView, FuncionariosView, 
     CadastrarFuncionarioView, BuscarFuncionarioView, EditarFuncionarioView,
-    ClientesView, CadastrarClienteView, BuscarClienteView, EditarClienteView,
-    VendasView, CadastrarVendaView, BuscarClienteVendaView, BuscarVendaView,
-    ListarProdutosView
+    ClientesView, CadastrarClienteView, BuscarClienteView, EditarClienteView
 )
 
 app_name = 'core'
@@ -31,11 +29,4 @@ urlpatterns = [
     path('clientes/cadastrar/', CadastrarClienteView.as_view(), name='cadastrar_cliente'),
     path('clientes/<int:cliente_id>/', BuscarClienteView.as_view(), name='buscar_cliente'),
     path('clientes/editar/<int:cliente_id>/', EditarClienteView.as_view(), name='editar_cliente'),
-
-    path('vendas/', VendasView.as_view(), name='vendas'),
-    path('vendas/cadastrar/', CadastrarVendaView.as_view(), name='cadastrar_venda'),
-    path('vendas/buscar-cliente/', BuscarClienteVendaView.as_view(), name='buscar_cliente_venda'),
-    path('vendas/buscar/<int:venda_id>/', BuscarVendaView.as_view(), name='buscar_venda'),
-    path('produtos/', ListarProdutosView.as_view(), name='listar_produtos'),
-
 ]

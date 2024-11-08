@@ -5,9 +5,8 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views import View
-from .models import Fornecedor, Monitoramento, Planta, Funcionario, Cliente, Produto, Venda
-from .forms import FornecedorForm, EnderecoForm, FuncionarioForm, ClienteForm, VendaForm, ItemVendaFormSet
-from django.db import transaction
+from .models import Fornecedor, Monitoramento, Planta, Funcionario, Cliente
+from .forms import FornecedorForm, EnderecoForm, FuncionarioForm, ClienteForm
 
 # Classe base para views relacionadas a fornecedores.
 # Essa classe contém métodos comuns que serão reutilizados em outras views.
@@ -407,114 +406,3 @@ class EditarClienteView(LoginRequiredMixin, UserPassesTestMixin, View):
         else:
             errors = cliente_form.errors
             return JsonResponse({'success': False, 'errors': errors}, status=400)
-
-class VendasView(LoginRequiredMixin, View):
-    template_name = 'vendas.html'
-
-    def get(self, request):
-        vendas = Venda.objects.all().order_by('-data_venda')
-        return render(request, self.template_name, {
-            'vendas': vendas,
-            'form': VendaForm(),
-        })
-
-class BuscarClienteVendaView(LoginRequiredMixin, View):
-    def get(self, request):
-        tipo = request.GET.get('tipo')
-        documento = request.GET.get('documento')
-        
-        try:
-            if tipo == 'PF':
-                cliente = Cliente.objects.filter(tipo='PF', cpf=documento).first()
-                if cliente:
-                    return JsonResponse({
-                        'cliente': {
-                            'nome': cliente.nome,
-                            'cpf': cliente.cpf
-                        }
-                    })
-            else:
-                cliente = Cliente.objects.filter(tipo='PJ', cnpj=documento).first()
-                if cliente:
-                    return JsonResponse({
-                        'cliente': {
-                            'razao_social': cliente.razao_social,
-                            'nome_fantasia': cliente.nome_fantasia,
-                            'cnpj': cliente.cnpj
-                        }
-                    })
-            
-            return JsonResponse({
-                'error': 'Cliente não encontrado'
-            }, status=404)
-            
-        except Exception as e:
-            print(f"Erro ao buscar cliente: {str(e)}")  # Log do erro
-            return JsonResponse({
-                'error': 'Erro ao buscar cliente'
-            }, status=500)
-
-class CadastrarVendaView(LoginRequiredMixin, View):
-    def post(self, request):
-        venda_form = VendaForm(request.POST)
-        item_formset = ItemVendaFormSet(request.POST, prefix='itens')
-
-        if venda_form.is_valid() and item_formset.is_valid():
-            try:
-                with transaction.atomic():
-                    venda = venda_form.save(commit=False)
-                    venda.cliente = venda_form.cleaned_data['cliente']
-                    venda.save()
-
-                    # Salvar itens
-                    itens = item_formset.save(commit=False)
-                    valor_total = 0
-                    for item in itens:
-                        item.venda = venda
-                        item.valor_unitario = item.produto.preco
-                        valor_total += item.subtotal
-                        item.save()
-
-                    # Atualizar valor total da venda
-                    venda.valor_total = valor_total
-                    venda.save()
-
-                return JsonResponse({'success': True})
-            except Exception as e:
-                return JsonResponse({'success': False, 'error': str(e)}, status=400)
-        else:
-            errors = {}
-            if venda_form.errors:
-                errors.update(venda_form.errors)
-            if item_formset.errors:
-                errors['itens'] = item_formset.errors
-            return JsonResponse({'success': False, 'errors': errors}, status=400)
-        
-class BuscarVendaView(LoginRequiredMixin, View):
-    def get(self, request, venda_id):
-        try:
-            venda = Venda.objects.get(id=venda_id)
-            itens = venda.itens.all()  # Acessando os itens da venda
-            itens_data = [{
-                'produto': item.produto.nome,  # Nome do produto
-                'quantidade': item.quantidade,
-                'valor_unitario': item.valor_unitario,
-                'subtotal': item.subtotal,
-            } for item in itens]
-
-            return JsonResponse({
-                'success': True,
-                'venda': {
-                    'id': venda.id,
-                    'data_venda': venda.data_venda.strftime('%d/%m/%Y %H:%M'),
-                    'valor_total': venda.valor_total,
-                    'itens': itens_data,
-                }
-            })
-        except Venda.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Venda não encontrada'}, status=404)
-
-class ListarProdutosView(View):
-    def get(self, request):
-        produtos = Produto.objects.all().values('id', 'nome', 'preco', 'quantidade')
-        return JsonResponse(list(produtos), safe=False)

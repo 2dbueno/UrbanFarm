@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Endereco, Fornecedor, Cliente, Funcionario, Venda, ItemVenda
+from .models import Endereco, Fornecedor, Cliente, Funcionario
 import re
 
 class EnderecoForm(forms.ModelForm):
@@ -47,6 +47,17 @@ class FornecedorForm(forms.ModelForm):
             raise ValidationError("O nome fantasia deve ter pelo menos 3 caracteres.")
         return nome_fantasia
 
+class FuncionarioForm(forms.ModelForm):
+    class Meta:
+        model = Funcionario
+        fields = ('cpf', 'nome', 'cargo', 'data_admissao', 'salario', 'status')
+
+    def clean_cpf(self):
+        cpf = self.cleaned_data.get('cpf')
+        if not re.match(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$', cpf):
+            raise ValidationError("O CPF deve estar no formato 'XXX.XXX.XXX-XX'.")
+        return cpf
+
 class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
@@ -77,61 +88,3 @@ class ClienteForm(forms.ModelForm):
                 raise forms.ValidationError('Razão Social e Nome Fantasia são obrigatórios para Pessoa Jurídica')
 
         return cleaned_data
-    
-class FuncionarioForm(forms.ModelForm):
-    class Meta:
-        model = Funcionario
-        fields = ('cpf', 'nome', 'cargo', 'data_admissao', 'salario', 'status')
-
-    def clean_cpf(self):
-        cpf = self.cleaned_data.get('cpf')
-        if not re.match(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$', cpf):
-            raise ValidationError("O CPF deve estar no formato 'XXX.XXX.XXX-XX'.")
-        return cpf
-
-class VendaForm(forms.ModelForm):
-    tipo = forms.ChoiceField(choices=Venda.TIPO_CHOICES, required=True)
-    documento = forms.CharField(max_length=18, required=True, label='CPF/CNPJ')
-    
-    class Meta:
-        model = Venda
-        fields = ['tipo', 'documento']
-
-    def clean(self):
-        cleaned_data = super().clean()
-        tipo = cleaned_data.get('tipo')
-        documento = cleaned_data.get('documento')
-
-        if documento:
-            documento = documento.replace('.', '').replace('-', '').replace('/', '')
-            try:
-                if tipo == 'PF':
-                    cliente = Cliente.objects.get(cpf=documento, tipo='PF')
-                else:
-                    cliente = Cliente.objects.get(cnpj=documento, tipo='PJ')
-                cleaned_data['cliente'] = cliente
-            except Cliente.DoesNotExist:
-                raise ValidationError('Cliente não encontrado. Por favor, cadastre o cliente antes de realizar a venda.')
-
-        return cleaned_data
-
-class ItemVendaFormSet(forms.BaseModelFormSet):
-    def clean(self):
-        if any(self.errors):
-            return
-        
-        produtos = []
-        for form in self.forms:
-            if form.cleaned_data:
-                produto = form.cleaned_data.get('produto')
-                if produto in produtos:
-                    raise ValidationError('Produto duplicado na venda.')
-                produtos.append(produto)
-
-ItemVendaFormSet = forms.modelformset_factory(
-    ItemVenda,
-    fields=('produto', 'quantidade'),
-    formset=ItemVendaFormSet,
-    extra=1,
-    can_delete=True
-)    

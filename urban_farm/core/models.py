@@ -15,15 +15,6 @@ class Monitoramento(models.Model):
     temperatura_ar = models.FloatField()
     quantidade_agua = models.FloatField()
     valor_ph = models.FloatField()
-class Produto(models.Model):
-    nome = models.CharField(max_length=100)
-    preco = models.DecimalField(max_digits=10, decimal_places=2)
-    quantidade = models.IntegerField()
-
-class Pedido(models.Model):
-    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
-    quantidade = models.IntegerField()
-    data_pedido = models.DateTimeField(auto_now_add=True)
 
 class Endereco(models.Model):
     id = models.AutoField(primary_key=True)
@@ -38,12 +29,21 @@ class Endereco(models.Model):
 
 class Fornecedor(models.Model):
     id = models.AutoField(primary_key=True)
-    # cnpj é CharField pois é mais facil validar e se deixar "IntegerField" ele remove 0 a esquerda
     cnpj = models.CharField(max_length=18, unique=True)
     status = models.BooleanField(default=True)
     razao_social = models.CharField(max_length=100)
     nome_fantasia = models.CharField(max_length=100)
     nome_representante = models.CharField(max_length=100)
+    endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
+
+class Funcionario(models.Model):
+    id = models.AutoField(primary_key=True)
+    cpf = models.CharField(max_length=14, unique=True)
+    status = models.BooleanField(default=True)
+    nome = models.CharField(max_length=100)
+    cargo = models.CharField(max_length=50, default='Funcionario')
+    data_admissao = models.DateField(default=timezone.now)
+    salario = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
 
 class Cliente(models.Model):
@@ -88,16 +88,6 @@ class Cliente(models.Model):
             return f"{self.nome} (CPF: {self.cpf})"
         return f"{self.nome_fantasia} (CNPJ: {self.cnpj})"
 
-class Funcionario(models.Model):
-    id = models.AutoField(primary_key=True)
-    cpf = models.CharField(max_length=14, unique=True)
-    status = models.BooleanField(default=True)
-    nome = models.CharField(max_length=100)
-    cargo = models.CharField(max_length=50, default='Funcionario')
-    data_admissao = models.DateField(default=timezone.now)
-    salario = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-    endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
-
 class Planta(models.Model):
     ESTAGIOS_PLANTIO = [
         ('GERMINACAO', 'Germinação'),
@@ -121,32 +111,3 @@ class Planta(models.Model):
         verbose_name = 'Planta'
         verbose_name_plural = 'Plantas'
         ordering = ['data_plantio']
-
-class Venda(models.Model):
-    TIPO_CHOICES = [
-        ('PF', 'Pessoa Física'),
-        ('PJ', 'Pessoa Jurídica')
-    ]
-
-    cliente = models.ForeignKey('Cliente', on_delete=models.PROTECT)
-    tipo = models.CharField(max_length=2, choices=TIPO_CHOICES)
-    data_venda = models.DateTimeField(default=timezone.now)
-    valor_total = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def __str__(self):
-        if self.tipo == 'PF':
-            return f"Venda {self.id} - {self.cliente.nome} (CPF: {self.cliente.cpf})"
-        return f"Venda {self.id} - {self.cliente.nome_fantasia} (CNPJ: {self.cliente.cnpj})"
-
-class ItemVenda(models.Model):
-    venda = models.ForeignKey(Venda, related_name='itens', on_delete=models.CASCADE)
-    produto = models.ForeignKey('Produto', on_delete=models.PROTECT)
-    quantidade = models.PositiveIntegerField()
-    valor_unitario = models.DecimalField(max_digits=10, decimal_places=2)
-
-    @property
-    def subtotal(self):
-        return self.quantidade * self.valor_unitario
-
-    def __str__(self):
-        return f"{self.quantidade}x {self.produto.nome}"
