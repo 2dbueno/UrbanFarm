@@ -5,8 +5,9 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views import View
-from .models import Fornecedor, Monitoramento, Planta, Funcionario, Cliente, Produto
-from .forms import FornecedorForm, EnderecoForm, FuncionarioForm, ClienteForm
+from .models import Fornecedor, Monitoramento, Planta, Funcionario, Cliente, Produto, Venda
+from .forms import FornecedorForm, EnderecoForm, FuncionarioForm, ClienteForm, VendaForm, ItemVendaFormSet
+from django.db import transaction
 
 # Classe base para views relacionadas a fornecedores.
 # Essa classe contém métodos comuns que serão reutilizados em outras views.
@@ -354,12 +355,6 @@ class CadastrarClienteView(LoginRequiredMixin, View):
             print("Erro:", e)  # Log do erro
             return JsonResponse({'success': False, 'errors': str(e)}, status=500)
 
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views import View
-from .models import Cliente
-
 class BuscarClienteView(LoginRequiredMixin, View):
     def get(self, request, cliente_id):
         cliente = get_object_or_404(Cliente, id=cliente_id)
@@ -412,14 +407,6 @@ class EditarClienteView(LoginRequiredMixin, UserPassesTestMixin, View):
         else:
             errors = cliente_form.errors
             return JsonResponse({'success': False, 'errors': errors}, status=400)
-
-from django.shortcuts import render
-from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
-from django.db import transaction
-from .models import Venda, Cliente, ItemVenda
-from .forms import VendaForm, ItemVendaFormSet
 
 class VendasView(LoginRequiredMixin, View):
     template_name = 'vendas.html'
