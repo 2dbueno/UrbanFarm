@@ -406,3 +406,165 @@ class EditarClienteView(LoginRequiredMixin, UserPassesTestMixin, View):
         else:
             errors = cliente_form.errors
             return JsonResponse({'success': False, 'errors': errors}, status=400)
+        
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
+from django.views import View
+from .models import Venda, ItemVenda
+from .forms import VendaForm, ItemVendaForm
+import logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+class VendasView(View):
+    template_name = 'vendas.html'
+
+    def get(self, request):
+        vendas = Venda.objects.all()
+        form = VendaForm()
+        clientes = Cliente.objects.all()
+        return render(request, self.template_name, {
+            'vendas': vendas,
+            'form': form,
+            'clientes': clientes,
+        })
+
+from django.http import JsonResponse
+
+class CadastrarVendaView(View):
+    def post(self, request):
+        venda_form = VendaForm(request.POST)
+
+        if venda_form.is_valid():
+            venda = venda_form.save()
+
+            # Log dos dados da venda
+            logging.info("Venda cadastrada com sucesso:")
+            logging.info(f"ID da Venda: {venda.id}")
+            logging.info(f"Cliente: {venda.cliente.nome}")
+            logging.info(f"Preço Total: {venda.preco_total}")
+            logging.info(f"Data da Venda: {venda.data_venda}")
+
+            # Processa os itens de venda
+            itens_da_venda = []
+            item_count = int(request.POST.get('item_count', 0))
+            logging.info(f"Quantidade de itens a serem processados: {item_count}")
+
+            for i in range(item_count):
+                item_nome = request.POST.get(f'itens-{i}-item')
+                item_quantidade = request.POST.get(f'itens-{i}-quantidade')
+                item_valor_unitario = request.POST.get(f'itens-{i}-valor_unitario')
+
+                # Log dos dados do item
+                logging.info(f"Processando item {i}: Nome: {item_nome}, Quantidade: {item_quantidade}, Valor Unitário: {item_valor_unitario}")
+
+                # Verifica se os campos não estão vazios ou None
+                if item_nome and item_quantidade and item_valor_unitario:
+                    try:
+                        item_quantidade = int(item_quantidade)
+                        item_valor_unitario = float(item_valor_unitario)
+                    except (ValueError, TypeError):
+                        logging.warning(f"Erro ao converter item: {item_nome}, quantidade: {item_quantidade}, valor unitário: {item_valor_unitario}")
+                        continue  # Ignora este item se houver erro de conversão
+
+                    item_form = ItemVendaForm({
+                        'item': item_nome,
+                        'quantidade': item_quantidade,
+                        'valor_unitario': item_valor_unitario,
+                    })
+
+                    if item_form.is_valid():
+                        item = item_form.save(commit=False)
+                        item.venda = venda  # Associa o item à venda
+                        item.save()
+
+                        # Log dos dados do item
+                        logging.info("Item de venda cadastrado:")
+                        logging.info(f" - Nome do Item: {item.item}")
+                        logging.info(f" - Quantidade: {item.quantidade}")
+                        logging.info(f" - Valor Unitário: {item.valor_unitario}")
+                        itens_da_venda.append(item)
+                    else:
+                        logging.warning(f"Erro ao cadastrar item: {item_form.errors}")
+                else:
+                    logging.warning(f"Dados do item {i} estão incompletos: Nome: {item_nome}, Quantidade: {item_quantidade}, Valor Unitário: {item_valor_unitario}")
+
+            if not itens_da_venda:
+                logging.warning("Nenhum item de venda foi cadastrado. Verifique os dados do formulário e do banco de dados.")
+
+            # Retorne um JSON de sucesso
+            return JsonResponse({'success': True, 'venda_id': venda.id})
+
+        # Se o formulário não for válido, retorne os erros como JSON
+        return JsonResponse({'success': False, 'errors': venda_form.errors}, status=400)
+
+
+class EditarVendaView(View):
+    def get(self, request, venda_id):
+        venda = get_object_or_404(Venda, id=venda_id)
+        form = VendaForm(instance=venda)
+        itens = ItemVenda.objects.filter(venda=venda)  # Obtém os itens associados à venda
+        return render(request, 'vendas.html', {
+            'form': form,
+            'venda': venda,
+            'itens': itens,  # Passa os itens para o template
+        })
+
+    def post(self, request, venda_id):
+        venda = get_object_or_404(Venda, id=venda_id)
+        form = VendaForm(request.POST, instance=venda)
+
+        if form.is_valid():
+            form.save()  # Salva a venda
+
+            # Atualiza os itens de venda
+            item_count = int(request.POST.get('item_count', 0))
+            ItemVenda.objects.filter(venda=venda).delete()  # Remove itens existentes antes de atualizar
+
+            for i in range(item_count):
+                item_nome = request.POST.get(f'itens-{i}-item')
+                item_quantidade = request.POST.get(f'itens-{i}-quantidade')
+                item_valor_unitario = request.POST.get(f'itens-{i}-valor_unitario')
+
+                if item_nome and item_quantidade and item_valor_unitario:
+                    item_form = ItemVendaForm({
+                        'item': item_nome,
+                        'quantidade': item_quantidade,
+                        'valor_unitario': item_valor_unitario,
+                    })
+
+                    if item_form.is_valid():
+                        item = item_form.save(commit=False)
+                        item.venda = venda  # Associa o item à venda
+                        item.save()  # Salva o item
+
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+
+class BuscarVendaView(View):
+    def get(self, request, venda_id):
+        venda = get_object_or_404(Venda, id=venda_id)
+        itens = ItemVenda.objects.filter(venda=venda)
+        
+        response_data = {
+            'venda': {
+                'id': venda.id,
+                'cliente': venda.cliente.nome,
+                'preco_total': venda.preco_total,
+                'data_venda': venda.data_venda,
+            },
+            'itens': [
+                {
+                    'item': item.item,
+                    'quantidade': item.quantidade,
+                    'valor_unitario': item.valor_unitario,
+                } for item in itens
+            ]
+        }
+        return JsonResponse(response_data)
+
+class DeletarVendaView(View):
+    def post(self, request, venda_id):
+        venda = get_object_or_404(Venda, id=venda_id)
+        venda.delete()
+        return JsonResponse({'success': True})

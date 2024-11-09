@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Endereco, Fornecedor, Cliente, Funcionario
+from .models import Endereco, Fornecedor, Cliente, Funcionario,Venda, ItemVenda
 import re
 
 class EnderecoForm(forms.ModelForm):
@@ -86,5 +86,46 @@ class ClienteForm(forms.ModelForm):
                 raise forms.ValidationError('CPF não deve ser preenchido para Pessoa Jurídica')
             if not razao_social or not nome_fantasia:
                 raise forms.ValidationError('Razão Social e Nome Fantasia são obrigatórios para Pessoa Jurídica')
+
+        return cleaned_data
+
+class ItemVendaForm(forms.ModelForm):
+    class Meta:
+        model = ItemVenda
+        fields = ('item', 'quantidade', 'valor_unitario')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        quantidade = cleaned_data.get('quantidade')
+        valor_unitario = cleaned_data.get('valor_unitario')
+
+        if quantidade <= 0:
+            raise forms.ValidationError('A quantidade deve ser maior que zero.')
+        if valor_unitario <= 0:
+            raise forms.ValidationError('O valor unitário deve ser maior que zero.')
+
+        return cleaned_data
+
+class VendaForm(forms.ModelForm):
+    cliente = forms.ModelChoiceField(queryset=Cliente.objects.all(), required=True)
+    
+    # Campos para itens de venda
+    item = forms.CharField(max_length=100, required=False)
+    quantidade = forms.IntegerField(min_value=1, required=False)
+    valor_unitario = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
+
+    class Meta:
+        model = Venda
+        fields = ('cliente', 'preco_total', 'item', 'quantidade', 'valor_unitario')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cliente = cleaned_data.get('cliente')
+        preco_total = cleaned_data.get('preco_total')
+
+        if not cliente:
+            raise forms.ValidationError('O cliente é obrigatório.')
+        if preco_total <= 0:
+            raise forms.ValidationError('O preço total deve ser maior que zero.')
 
         return cleaned_data

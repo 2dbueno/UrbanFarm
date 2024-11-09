@@ -111,3 +111,20 @@ class Planta(models.Model):
         verbose_name = 'Planta'
         verbose_name_plural = 'Plantas'
         ordering = ['data_plantio']
+
+class Venda(models.Model):
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    data_venda = models.DateTimeField(default=timezone.now)
+    preco_total = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Venda {self.id} - {self.cliente} em {self.data_venda}"
+
+class ItemVenda(models.Model):
+    venda = models.ForeignKey(Venda, related_name='itens', on_delete=models.CASCADE)
+    item = models.CharField(max_length=100)
+    quantidade = models.PositiveIntegerField()
+    valor_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.item} - {self.quantidade} unidades"

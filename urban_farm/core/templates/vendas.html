@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Vendas - Cadastro{% endblock %}
+
+{% load static %}
+{% load custom_filters %}
+
+{% block header %}
+<header class="header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <h1 class="title">Lista de Vendas</h1>
+    <input type="text" placeholder="Digite o cliente" class="search-input" aria-label="Pesquisar venda pelo cliente">
+    <button id="openModal" class="cadastrar-venda" aria-label="Cadastrar nova venda">Cadastrar Venda</button>
+</header>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'styles/vendas.css' %}">
+
+<main>
+    <table class="vendas-table" aria-label="Tabela de vendas">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>CLIENTE</th>
+                <th>DATA</th>
+                <th>PREÇO TOTAL</th>
+                <th>AÇÃO</th>
+            </tr>
+        </thead>
+        <tbody id="venda-list">
+            {% for venda in vendas %}
+            <tr data-id="{{ venda.id }}" class="venda-row">
+                <td>{{ venda.id }}</td>
+                <td>{{ venda.cliente.nome }}</td>
+                <td>{{ venda.data_venda }}</td>
+                <td>R$ {{ venda.preco_total }}</td>
+                <td>
+                    <button class="edit-btn" aria-label="Editar venda" data-id="{{ venda.id }}">Editar</button>
+                    <button class="delete-btn" aria-label="Deletar venda" data-id="{{ venda.id }}">Deletar</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">Nenhuma venda cadastrada.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div id="modal" class="modal" role="dialog" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <button class="close" aria-label="Fechar modal">&times;</button>
+            <h2 id="modal-title">Cadastrar Venda</h2>
+
+            <form id="vendaForm" method="post">
+                {% csrf_token %}
+                <fieldset class="form-section">
+                    <legend>Cliente</legend>
+                    <div class="form-group">
+                        <label for="cliente">Cliente</label>
+                        <select name="cliente" id="cliente" class="form-control" required>
+                            <option value="">Selecione o cliente</option>
+                            {% for cliente in clientes %}
+                                <option value="{{ cliente.id }}">{{ cliente.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </fieldset>
+            
+                <fieldset class="form-section">
+                    <legend>Itens de Venda</legend>
+                    <div class="form-group">
+                        <label for="item">Item</label>
+                        <input type="text" name="item" id="item" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantidade">Quantidade</label>
+                        <input type="number" name="quantidade" id="quantidade" class="form-control" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="valor_unitario">Valor Unitário</label>
+                        <input type="number" name="valor_unitario" id="valor_unitario" class="form-control" step="0.01" required>
+                    </div>
+                    <button type="button" id="addItem" class="btn btn-primary">Adicionar Item</button>
+                </fieldset>
+            
+                <fieldset class="form-section">
+                    <legend>Preço Total</legend>
+                    <div class="form-group">
+                        <label for="preco_total">Preço Total</label>
+                        <input type="number" name="preco_total" id="preco_total" step="0.01" required readonly>
+                    </div>
+                </fieldset>
+            
+                <div class="form-submit">
+                    <button type="submit" class="submit-btn">Cadastrar</button>
+                </div>
+                
+                <div class="edit-buttons" style="display: none;">
+                    <button type="button" class="save-btn">Salvar</button>
+                    <button type="button" class="cancel-btn">Cancelar</button>
+                </div>
+            </form>
+            
+            <!-- Tabela para exibir itens adicion ados -->
+            <table id="itens-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantidade</th>
+                        <th>Valor Unitário</th>
+                    </tr>
+                </thead>
+                <tbody id="itens-list">
+                    <!-- Cada item adicionado deve ser inserido aqui -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    var cadastrar_venda_url = "{% url 'core:cadastrar_venda' %}";
+    var editar_venda_url = "{% url 'core:editar_venda' '0' %}".replace('/0/', '/');
+    var buscar_venda_url = "{% url 'core:buscar_venda' '0' %}".replace('/0/', '/');
+</script>
+<script src="{% static 'scripts/vendas.js' %}"></script>
+{% endblock %}
