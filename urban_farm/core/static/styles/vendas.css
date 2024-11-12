@@ -1,5 +1,38 @@
 /* core/static/styles/vendas.css */
 
+#itens-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#itens-table th,
+#itens-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd; /* Adiciona bordas às células */
+}
+
+#itens-table th {
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+#itens-table tr {
+    transition: background-color 0.3s ease;
+}
+
+#itens-table tr:hover {
+    background-color: #f1f1f1; /* Cor de fundo ao passar o mouse */
+}
+
 .vendas-table {
     width: 100%;
     border-collapse: collapse;
