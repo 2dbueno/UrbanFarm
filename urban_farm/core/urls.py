@@ -5,7 +5,7 @@ from .views import (
     BuscarFornecedorPorCNPJView, ProducaoView, FuncionariosView, 
     CadastrarFuncionarioView, BuscarFuncionarioView, EditarFuncionarioView,
     ClientesView, CadastrarClienteView, BuscarClienteView, EditarClienteView,
-    VendasView, CadastrarVendaView, EditarVendaView, DeletarVendaView, BuscarVendaView
+    VendasView, CadastrarVendaView, EditarVendaView, BuscarVendaView
 )
 
 app_name = 'core'
@@ -34,6 +34,5 @@ urlpatterns = [
     path('vendas/', VendasView.as_view(), name='vendas'),  # Lista todas as vendas
     path('vendas/cadastrar/', CadastrarVendaView.as_view(), name='cadastrar_venda'),  # Cadastra uma nova venda
     path('vendas/editar/<int:venda_id>/', EditarVendaView.as_view(), name='editar_venda'),  # Edita uma venda existente
-    path('vendas/deletar/<int:venda_id>/', DeletarVendaView.as_view(), name='deletar_venda'),  # Deleta uma venda
     path('vendas/buscar/<int:venda_id>/', BuscarVendaView.as_view(), name='buscar_venda'),  # Define a URL para buscar uma venda
 ]

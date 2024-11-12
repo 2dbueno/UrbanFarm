@@ -549,6 +549,7 @@ class BuscarVendaView(View):
         response_data = {
             'venda': {
                 'id': venda.id,
+                'cliente_id': venda.cliente.id,  # Inclua o ID do cliente
                 'cliente': venda.cliente.nome,
                 'preco_total': venda.preco_total,
                 'data_venda': venda.data_venda,
@@ -562,9 +563,3 @@ class BuscarVendaView(View):
             ]
         }
         return JsonResponse(response_data)
-
-class DeletarVendaView(View):
-    def post(self, request, venda_id):
-        venda = get_object_or_404(Venda, id=venda_id)
-        venda.delete()
-        return JsonResponse({'success': True})
