@@ -61,7 +61,13 @@
                         <select name="cliente" id="cliente" class="form-control" required>
                             <option value="">Selecione o cliente</option>
                             {% for cliente in clientes %}
-                                <option value="{{ cliente.id }}">{{ cliente.nome }}</option>
+                                <option value="{{ cliente.id }}">
+                                    {% if cliente.tipo == 'PF' %}
+                                        {{ cliente.nome }} (CPF: {{ cliente.cpf }})
+                                    {% elif cliente.tipo == 'PJ' %}
+                                        {{ cliente.nome_fantasia }} (CNPJ: {{ cliente.cnpj }})
+                                    {% endif %}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>
