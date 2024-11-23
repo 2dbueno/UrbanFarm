@@ -3,22 +3,25 @@ body, html {
     margin: 0;
     padding: 0;
     border-bottom: 0;
+    overflow-x: hidden; /* Evita que a barra de rolagem horizontal apareça */
 }
 
 header {
     display: none;
 }
 
-.main-content{
+.main-content {
     padding: 2rem;
 }
 
 /* Contêiner pai para alinhamento dos elementos */
 .content-container {
-    padding: 0 2rem;
+    padding: 0 1rem; /* Padding reduzido para melhor responsividade */
     display: flex;
     flex-direction: column;
     align-items: center; /* Centraliza horizontalmente */
+    width: 100%; /* Garante que o contêiner ocupe 100% da largura */
+    box-sizing: border-box; /* Inclui padding na largura total */
 }
 
 /* Título da página de monitoramento */
@@ -30,14 +33,17 @@ header {
 /* Descrição */
 .description {
     color: var(--cor-secundaria);
+    text-align: center; /* Centraliza o texto */
+    width: 70%; /* Garante que a descrição ocupe 100% da largura */
+    box-sizing: border-box; /* Inclui padding na largura total */
 }
 
 /* Dashboard com cards organizados em grid */
 .dashboard {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    width: 100%;
-    max-width: 1000px;
+    width: 80%;
+    max-width: 1000px; /* Limita a largura máxima do dashboard */
     margin: 2rem 0 0; /* Centraliza horizontalmente e add espaço acima do card */
     gap: 4rem; /* Espaçamento entre os cards */
     justify-items: center; /* Centraliza o conteúdo do card no grid */
@@ -49,7 +55,8 @@ header {
     border: 1px solid var(--cor-fundo);
     border-color: var(--cor-principal);
     border-radius: 0.5rem;
-    width: 200px; /* Largura fixa */
+    width: 100%; /* Mudar para 100% para melhor responsividade */
+    max-width: 200px; /* Limitar a largura máxima */
     height: 150px; /* Altura fixa */
     display: flex;
     flex-direction: column;
@@ -66,7 +73,7 @@ header {
 
 /* Valor dentro dos cards */
 .card p {
-    font-size: 1. 5rem;
+    font-size: 1.5rem; /* Corrigir o espaço extra */
     font-weight: bold;
     color: var(--cor-confirmacao);
     word-break: break-word;
@@ -83,10 +90,22 @@ header {
         font-size: 1.5rem; /* Ajusta o tamanho do título */
     }
 
+    .description {
+        font-size: 1rem; /* Ajusta o tamanho da descrição */
+        padding: 0 1rem; /* Adiciona um pouco de padding lateral */
+    }
+
     .card h3 {
         font-size: 1rem; /* Reduz o tamanho do título dos cards */
     }
 
+    .dashboard {
+        gap: 2rem; /* Ajusta o espaçamento entre os cards */
+    }
+
+    .content-container {
+        padding: 0 1rem; /* Reduz o padding lateral para caber melhor na tela */
+    }
 }
 
 @media (max-width: 480px) {
@@ -94,14 +113,26 @@ header {
         font-size: 1.25rem; /* Ajusta o tamanho do título */
     }
 
+    .description {
+        font-size: 0.875rem; /* Reduz o tamanho da descrição */
+        padding: 0; /* Remove padding para maximizar espaço */
+    }
+
     .dashboard {
         gap: 0.5rem; /* Reduz o espaçamento entre os cards */
     }
 
     .card h3 {
-        font-size: 0.875rem; /* Reduz o tamanho do h3 para textos longos */
+        font-size: 0.875rem; /* Red uz o tamanho do h3 para textos longos */
     }
 
+    .card p {
+        font-size: 1.25rem; /* Ajusta o tamanho do valor dentro dos cards */
+    }
+
+    .content-container {
+        padding: 0; /* Remove o padding desnecessário em dispositivos móveis */
+    }
 }
 
 body.dark {
