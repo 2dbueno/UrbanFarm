@@ -419,6 +419,7 @@ class VendasView(View):
     template_name = 'vendas.html'
 
     def get(self, request):
+        
         vendas = Venda.objects.all()
         form = VendaForm()
         clientes = Cliente.objects.all()

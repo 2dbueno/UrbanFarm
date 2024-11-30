@@ -32,7 +32,13 @@
             {% for venda in vendas %}
             <tr data-id="{{ venda.id }}" class="venda-row">
                 <td>{{ venda.id }}</td>
-                <td>{{ venda.cliente.nome }}</td>
+                <td>
+                    {% if venda.cliente.tipo == 'PF' %}
+                        {{ venda.cliente.nome }}
+                    {% else %}
+                        {{ venda.cliente.razao_social }}
+                    {% endif %}
+                </td>                
                 <td>{{ venda.data_venda }}</td>
                 <td>R$ {{ venda.preco_total }}</td>
                 <td>
@@ -54,6 +60,7 @@
 
             <form id="vendaForm" method="post">
                 {% csrf_token %}
+                <input type="hidden" id="venda-id" name="venda_id" value="">
                 <fieldset class="form-section">
                     <legend>Cliente</legend>
                     <div class="form-group">
@@ -72,7 +79,7 @@
                         </select>
                     </div>
                 </fieldset>
-            
+
                 <fieldset class="form-section">
                     <legend>Itens de Venda</legend>
                     <div class="form-group">
@@ -89,7 +96,7 @@
                     </div>
                     <button type="button" id="addItem" class="btn btn-primary">Adicionar Item</button>
                 </fieldset>
-            
+
                 <fieldset class="form-section">
                     <legend>Preço Total</legend>
                     <div class="form-group">
@@ -97,17 +104,17 @@
                         <input type="number" name="preco_total" id="preco_total" step="0.01" required readonly>
                     </div>
                 </fieldset>
-            
+
                 <div class="form-submit">
                     <button type="submit" class="submit-btn">Cadastrar</button>
                 </div>
-                
+
                 <div class="edit-buttons" style="display: none;">
                     <button type="button" class="save-btn">Salvar</button>
                     <button type="button" class="cancel-btn">Cancelar</button>
                 </div>
             </form>
-            
+
             <table id="itens-table">
                 <thead>
                     <tr>
@@ -126,8 +133,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     var cadastrar_venda_url = "{% url 'core:cadastrar_venda' %}";
-    var editar_venda_url = "{% url 'core:editar_venda' '0' %}".replace('/0/', '/');
-    var buscar_venda_url = "{% url 'core:buscar_venda' 0 %}"; // Corrigido
+    var editar_venda_url = "{% url 'core:editar_venda' 0 %}";
+    var buscar_venda_url = "{% url 'core:buscar_venda' 0 %}";
 
     document.addEventListener('DOMContentLoaded', function() {
         const openModalButton = document.getElementById('openModal');
@@ -137,20 +144,23 @@
         const vendaForm = document.getElementById('vendaForm');
         const itensList = document.getElementById('itens-list');
         const precoTotalInput = document.getElementById('preco_total');
+        const saveButton = document.querySelector('.save-btn');
+        const cancelButton = document.querySelector('.cancel-btn');
         let itemCount = 0;
         let totalPrice = 0;
 
-        // Função para limpar o modal
         function resetModal() {
-            vendaForm.reset(); // Reseta o formulário
-            itensList.innerHTML = ''; // Limpa a lista de itens
-            itemCount = 0; // Reseta o contador de itens
-            totalPrice = 0; // Reseta o preço total
-            precoTotalInput.value = '0.00'; // Reseta o preço total no campo
+            vendaForm.reset();
+            itensList.innerHTML = '';
+            itemCount = 0;
+            totalPrice = 0;
+            precoTotalInput.value = '0.00';
+            document.querySelector('.edit-buttons').style.display = 'none';
+            document.querySelector('.submit-btn').style.display = 'inline-block';
         }
 
         openModalButton.addEventListener('click', function() {
-            resetModal(); // Limpa o modal sempre que for aberto
+            resetModal();
             modal.style.display = 'block';
         });
 
@@ -175,9 +185,7 @@
                 totalPrice += (quantidade * valorUnitario);
                 precoTotalInput.value = totalPrice.toFixed(2);
         
-                itemInput.value = '';
-                quantidadeInput.value = '';
-                valorUnitarioInput.value = '';
+
             } else {
                 alert('Por favor, preencha todos os campos corretamente.');
             }
@@ -199,7 +207,10 @@
                 formData.append(`itens-${i}-valor_unitario`, valorUnitario);
             }
 
-            fetch(cadastrar_venda_url, {
+            const vendaId = document.getElementById('venda-id').value;
+            const url = vendaId ? editar_venda_url.replace('0', vendaId) : cadastrar_venda_url;
+
+            fetch(url, {
                 method: 'POST',
                 body: formData,
             })
@@ -207,25 +218,33 @@
                 if (!response.ok) {
                     return response.json().then(err => { throw new Error(err.errors); });
                 }
-                return response.json();
+                return response .json();
             })
             .then(data => {
                 if (data.success) {
-                    alert(' Venda cadastrada com sucesso! ID da Venda: ' + data.venda_id);
-                    location.reload(); // Recarrega a página para mostrar a nova venda
+                    alert('Venda ' + (vendaId ? 'editada' : 'cadastrada') + ' com sucesso! ID da Venda: ' + data.venda_id);
+                    location.reload(); // Recarrega a página para mostrar a nova venda ou a venda editada
                 } else {
-                    alert ('Erro ao cadastrar venda: ' + JSON.stringify(data.errors));
+                    alert('Erro ao ' + (vendaId ? 'editar' : 'cadastrar') + ' venda: ' + JSON.stringify(data.errors));
                 }
             })
             .catch(error => {
                 console.error('Erro:', error);
-                alert('Ocorreu um erro ao cadastrar a venda: ' + error.message);
+                alert('Ocorreu um erro ao ' + (vendaId ? 'editar' : 'cadastrar') + ' a venda: ' + error.message);
             });
         });
 
-        // Adiciona evento de clique em cada linha da tabela
-        document.querySelectorAll('.venda-row').forEach(row => {
-            row.addEventListener('click', function() {
+        saveButton.addEventListener('click', function() {
+            vendaForm.dispatchEvent(new Event('submit')); // Dispara o evento de submit para salvar
+        });
+
+        cancelButton.addEventListener('click', function() {
+            modal.style.display = 'none'; // Fecha o modal
+            resetModal(); // Limpa os campos do modal
+        });
+
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function() {
                 const vendaId = this.getAttribute('data-id');
                 fetch(buscar_venda_url.replace('0', vendaId))
                 .then(response => {
@@ -235,14 +254,12 @@
                     return response.json();
                 })
                 .then(data => {
-                    // Preenche o formulário com os dados da venda
-                    document.getElementById('cliente').value = data.venda.cliente_id; // Atribui o ID do cliente
+                    document.getElementById('cliente').value = data.venda.cliente_id;
                     precoTotalInput.value = data.venda.preco_total;
-                    itensList.innerHTML = ''; // Limpa a lista de itens
-                    itemCount = 0; // Reseta o contador de itens
-                    totalPrice = 0; // Reseta o preço total
+                    itensList.innerHTML = '';
+                    itemCount = 0;
+                    totalPrice = 0;
 
-                    // Adiciona os itens ao formulário
                     data.itens.forEach(item => {
                         const row = itensList.insertRow();
                         row.innerHTML = `<td>${item.item}</td><td>${item.quantidade}</td><td>R$ ${parseFloat(item.valor_unitario).toFixed(2)}</td>`;
@@ -250,7 +267,10 @@
                         totalPrice += item.quantidade * parseFloat(item.valor_unitario);
                     });
                     precoTotalInput.value = totalPrice.toFixed(2);
-                    modal.style.display = 'block'; // Exibe o modal
+                    document.getElementById('venda-id').value = vendaId; // Armazena o ID da venda no campo oculto
+                    document.querySelector('.edit-buttons').style.display = 'block';
+                    document.querySelector('.submit-btn').style.display = 'none';
+                    modal.style.display = 'block';
                 })
                 .catch(error => {
                     console.error('Erro:', error);
@@ -259,21 +279,5 @@
             });
         });
     });
-
-    // Função para obter o cookie CSRF
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
 </script>
 {% endblock %}

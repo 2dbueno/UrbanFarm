@@ -66,7 +66,7 @@ DATABASES = {
         'NAME': 'urban_farm',
         'USER': 'sa',
         'PASSWORD': '4268',
-        'HOST': 'DESKTOP-3UL1EAD',
+        'HOST': 'DESKTOP-LISMFBG',
         'PORT': '',
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
