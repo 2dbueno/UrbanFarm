@@ -166,7 +166,13 @@
     </div>
 </main>
 
+<!-- Biblioteca jQuery que facilita a manipulação do DOM e requisições AJAX -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- 
+  Plugin jQuery Mask que permite aplicar máscaras
+  em campos de entrada, facilita formatação de dados como telefone, CPF e datas.
+-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 <script>
     var cadastrar_cliente_url = "{% url 'core:cadastrar_cliente' %}";

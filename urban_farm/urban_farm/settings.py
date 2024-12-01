@@ -6,12 +6,14 @@ SECRET_KEY = 'django-insecure-+l&i-!je5oxbg4f8zl0i90+v!3tn#83=a_hs+(6iav#7a-96$r
 
 DEBUG = True
 
+# Lista de hosts permitidos para o aplicativo, incluindo localhost e ngrok.
 ALLOWED_HOSTS = [
     'localhost', 
     '127.0.0.1', 
     '.ngrok-free.app'
 ]
 
+# Lista de origens confiáveis para proteção contra CSRF, permitindo acesso de ngrok.
 CSRF_TRUSTED_ORIGINS = [
     'https://*.ngrok-free.app'
 ]
@@ -40,15 +42,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Define a configuração de URLs raiz do projeto e as opções para o sistema de templates do Django.
 ROOT_URLCONF = 'urban_farm.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
+        'BACKEND': 'django.template.backends.django.DjangoTemplates', # Backend de templates do Django
+        'DIRS': [], # Diretórios adicionais para buscar templates (vazio neste caso)
+        'APP_DIRS': True, # Permite que o Django busque templates em diretórios de aplicativos
+        'OPTIONS': {     
+            'context_processors': [  # Processadores de contexto para adicionar variáveis ao contexto dos templates
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -59,21 +62,22 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'urban_farm.wsgi.application'
-
+# Configuração do banco de dados para o Django, utilizando SQL Server com ODBC.
 DATABASES = {
     'default': {
-        'ENGINE': 'mssql',
-        'NAME': 'urban_farm',
-        'USER': 'sa',
-        'PASSWORD': '4268',
-        'HOST': 'DESKTOP-LISMFBG',
-        'PORT': '',
+        'ENGINE': 'mssql',  # Motor do banco de dados (SQL Server)
+        'NAME': 'urban_farm',  # Nome do banco de dados
+        'USER': 'sa',  # Nome do usuário para autenticação
+        'PASSWORD': '4268',  # Senha do usuário
+        'HOST': 'DESKTOP-LISMFBG',  # Host onde o banco de dados está localizado
+        'PORT': '',  # Porta do banco de dados (vazia para padrão)
         'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
+            'driver': 'ODBC Driver 17 for SQL Server',  # Driver ODBC utilizado para conexão
         },
     }
 }
 
+# Configuração dos validadores de senha para o sistema de autenticação do Django.
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',

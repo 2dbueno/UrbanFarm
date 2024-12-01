@@ -5,8 +5,8 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views import View
-from .models import Fornecedor, Monitoramento, Planta, Funcionario, Cliente
-from .forms import FornecedorForm, EnderecoForm, FuncionarioForm, ClienteForm
+from .models import Fornecedor, Monitoramento, Planta, Funcionario, Cliente, Venda, ItemVenda
+from .forms import FornecedorForm, EnderecoForm, FuncionarioForm, ClienteForm, VendaForm, ItemVendaForm
 
 # Classe base para views relacionadas a fornecedores.
 # Essa classe contém métodos comuns que serão reutilizados em outras views.
@@ -407,14 +407,14 @@ class EditarClienteView(LoginRequiredMixin, UserPassesTestMixin, View):
             errors = cliente_form.errors
             return JsonResponse({'success': False, 'errors': errors}, status=400)
         
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse
-from django.views import View
-from .models import Venda, ItemVenda
-from .forms import VendaForm, ItemVendaForm
 import logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Configuração do sistema de logging:
+# Define o nível mínimo de severidade das mensagens a serem registradas como INFO,
+# o que significa que mensagens de nível INFO, WARNING, ERROR e CRITICAL serão capturadas.
+# As mensagens incluirá a data e hora do log, o nível de severidade(forma de classificar a importância/gravidade das mensagens)
+# e a mensagem em si.
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 class VendasView(View):
     template_name = 'vendas.html'
 
@@ -429,7 +429,6 @@ class VendasView(View):
             'clientes': clientes,
         })
 
-from django.http import JsonResponse
 
 class CadastrarVendaView(View):
     def post(self, request):

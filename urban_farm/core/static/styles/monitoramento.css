@@ -136,7 +136,7 @@ header {
 }
 
 body.dark {
-    background-color: var(--cor-fundo-dark); /* Certifique-se que o fundo escuro é aplicado */
+    background-color: var(--cor-fundo-dark); /* Fundo escuro é aplicado */
 }
 
 body.dark .card {
