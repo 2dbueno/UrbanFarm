@@ -24,8 +24,8 @@
                 <th>ID</th>
                 <th>NOME FANTASIA</th>
                 <th>CNPJ</th>
-                <th>STATUS</th>
-                <th>AÇÃO</th>
+                <th class="status-column">STATUS</th> <!-- Adicionada classe para status -->
+                <th class="acao-column">AÇÃO</th> <!-- Adicionada classe para ação -->
             </tr>
         </thead>
         <tbody id="fornecedor-list">
@@ -34,8 +34,9 @@
                 <td>{{ fornecedor.id }}</td>
                 <td>{{ fornecedor.nome_fantasia }}</td>
                 <td>{{ fornecedor.cnpj|format_cnpj }}</td>
-                <td class="{% if fornecedor.status %}ativo{% else %}inativo{% endif %}">{{ fornecedor.status|yesno:"ATIVO,INATIVO" }}</td>
-                <td>
+                <td class="status-column {% if fornecedor.status %}ativo{% else %}inativo{% endif %}">
+                    {{ fornecedor.status|yesno:"ATIVO,INATIVO" }}
+                <td class="edit-mobile">
                     {% if user.is_superuser %}
                         <button class="edit-btn" aria-label="Editar fornecedor" data-id="{{ fornecedor.id }}">Editar</button>
                     {% else %}

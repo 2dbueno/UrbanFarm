@@ -178,3 +178,9 @@
 .view-btn:active {
     background-color: var(--cor-visualizar-ativo);
 }
+
+@media screen and (max-width: 375px) {
+    .acao-column {
+        display: none; /* Oculta a coluna AÇÃO */
+    }
+}

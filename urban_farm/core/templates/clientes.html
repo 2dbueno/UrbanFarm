@@ -26,8 +26,8 @@
                 <th>NOME/RAZÃO SOCIAL</th>
                 <th>CPF/CNPJ</th>
                 <th>TIPO</th>
-                <th>STATUS</th>
-                <th>AÇÃO</th>
+                <th class="status-column">STATUS</th> <!-- Adicionada classe para status -->
+                <th class="acao-column">AÇÃO</th> <!-- Adicionada classe para ação -->
             </tr>
         </thead>
         <tbody id="cliente-list">
@@ -45,10 +45,10 @@
                     {% endif %}
                 </td>
                 <td>{{ cliente.get_tipo_display }}</td>
-                <td class="{% if cliente.status %}ativo{% else %}inativo{% endif %}">
+                <td class="status-column {% if cliente.status %}ativo{% else %}inativo{% endif %}">
                     {{ cliente.status|yesno:"ATIVO,INATIVO" }}
                 </td>
-                <td>
+                <td class="acao-column">
                     {% if user.is_superuser %}
                         <button class="edit-btn" aria-label="Editar cliente" data-id="{{ cliente.id }}">Editar</button>
                     {% else %}

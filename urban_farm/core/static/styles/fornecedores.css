@@ -287,6 +287,18 @@ button {
     background-color: #e53935; /* Vermelho mais escuro ao passar o mouse */
 }
 
+
+/* Estilos para a página de fornecedores */
+@media screen and (max-width: 375px) {
+    .status-column, .acao-column, .edit-mobile {
+        display: none; /* Oculta as colunas STATUS e AÇÃO */
+    }
+
+    .fornecedores-table th, .fornecedores-table td {
+        text-align: left; /* Alinha o texto à esquerda para melhor legibilidade */
+    }
+}
+
 /* Responsividade */
 @media screen and (max-width: 768px) {
     .fornecedores-table {

@@ -26,8 +26,8 @@
                 <th>NOME</th>
                 <th>CPF</th>
                 <th>CARGO</th>
-                <th>STATUS</th>
-                <th>AÇÃO</th>
+                <th class="status-column">STATUS</th> <!-- Classe para status -->
+                <th class="acao-column">AÇÃO</th> <!-- Classe para ação -->
             </tr>
         </thead>
         <tbody id="funcionario-list">
@@ -37,10 +37,10 @@
                 <td>{{ funcionario.nome }}</td>
                 <td>{{ funcionario.cpf|format_cpf }}</td>
                 <td>{{ funcionario.cargo }}</td>
-                <td class="{% if funcionario.status %}ativo{% else %}inativo{% endif %}">
+                <td class="status-column {% if funcionario.status %}ativo{% else %}inativo{% endif %}">
                     {{ funcionario.status|yesno:"ATIVO,INATIVO" }}
                 </td>
-                <td>
+                <td class="acao-column"> <!-- Adicionando a classe aqui -->
                     {% if user.is_superuser %}
                         <button class="edit-btn" aria-label="Editar funcionário" data-id="{{ funcionario.id }}">Editar</button>
                     {% else %}

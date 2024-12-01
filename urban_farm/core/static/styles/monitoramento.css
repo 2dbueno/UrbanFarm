@@ -147,3 +147,16 @@ body.dark .card {
 body.dark .card h3 {
     color: var(--cor-branco); /* Títulos dos cards em branco no modo escuro */
 }
+/* Estilo do card de clima */
+#weather-card {
+    width: 100%; /* Garante que o card ocupe toda a largura */
+    max-width: 600px; /* Limita a largura máxima do card */
+    height: auto; /* Altura automática para acomodar o conteúdo */
+    padding: 20px; /* Espaçamento interno */
+    margin: 20px auto; /* Centraliza horizontalmente e adiciona espaço acima e abaixo */
+    background-color: var(--cor-branco); /* Fundo branco */
+    border: 1px solid var(--cor-fundo); /* Borda do card */
+    border-radius: 8px; /* Bordas arredondadas */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra do card */
+    text-align: center; /* Centraliza o texto */
+}
