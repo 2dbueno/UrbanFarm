@@ -14,8 +14,8 @@
 
     <div class="dashboard">
         <div class="card">
-            <h3>Pedidos</h3>
-            <p>{{ monitoramento.pedidos }}</p>
+            <h3>Monitoramento</h3>
+            <p>Vendas Total: {{ total_vendas }}</p>  <!-- Exibe o total de vendas -->
         </div>
 
         <div class="card">
@@ -33,10 +33,10 @@
             <p>{{ monitoramento.kg_colheita }}</p>
         </div>
 
-        <div class="card">
+        {% comment %} <div class="card">
             <h3>Temperatura do Ar</h3>
             <p>{{ monitoramento.temperatura_ar }}°C</p>
-        </div>
+        </div> {% endcomment %}
 
         <div class="card">
             <h3>Quantidade de Água</h3>

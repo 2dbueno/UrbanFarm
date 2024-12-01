@@ -47,10 +47,15 @@ class MonitoramentoView(LoginRequiredMixin, View):
     template_name = 'monitoramento.html'
 
     def get(self, request):
-        # Obtém o primeiro objeto de monitoramento e o passa para o template.
+        # Obtém o primeiro objeto de monitoramento
         monitoramento = Monitoramento.objects.first()
-        return render(request, self.template_name, {'monitoramento': monitoramento})
+        
+        # Conta o número total de vendas
+        total_vendas = Venda.objects.count()
 
+        # Passa o monitoramento e total de vendas para o template
+        return render(request, self.template_name, {'monitoramento': monitoramento, 'total_vendas': total_vendas})
+    
 # View para realizar logout do usuário.
 class LogoutView(View):
     def get(self, request):
