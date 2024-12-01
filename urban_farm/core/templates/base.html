@@ -29,6 +29,10 @@
             <li>
               <a href="{% url 'core:funcionarios' %}">Funcionários</a>
             </li>
+            <button onclick="document.getElementById('logout-form').submit();" class="logout-button">Sair</button>
+            <form id="logout-form" action="{% url 'core:logout' %}" method="POST" style="display: none;">
+                {% csrf_token %}
+            </form>
           {% endif %}
         </ul>
     </nav>

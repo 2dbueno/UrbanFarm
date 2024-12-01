@@ -72,6 +72,24 @@ body {
     transition: 0.3s;
 }
 
+/* Estilo para o botão de logout */
+.logout-button {
+    background-color: var(--cor-confirmacao); /* Cor de fundo */
+    color: var(--cor-branco); /* Cor do texto */
+    border: none; /* Sem borda */
+    padding: 5px 5px; /* Espaçamento interno */
+    border-radius: 5px; /* Bordas arredondadas */
+    cursor: pointer; /* Muda o cursor para indicar que é clicável */
+    transition: background-color 0.3s ease; /* Transição suave para a cor de fundo */
+    font-size: 1rem; /* Tamanho da fonte */
+    margin-top: 1rem; /* Margem superior para espaçamento */
+    width: 30%; /* Faz o botão ocupar toda a largura do item da lista */
+    position: relative;
+}
+
+.logout-button:hover {
+    background-color: #1c8e2f; /* Cor de fundo ao passar o mouse */
+}
 /* Estilo para link ativo */
 .sidebar ul li a.active-link {
     border-left: 4px solid var(--cor-confirmacao);

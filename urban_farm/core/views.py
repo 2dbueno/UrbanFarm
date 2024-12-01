@@ -58,7 +58,7 @@ class MonitoramentoView(LoginRequiredMixin, View):
     
 # View para realizar logout do usuário.
 class LogoutView(View):
-    def get(self, request):
+    def post(self, request):
         logout(request)  # Realiza o logout do usuário.
         return redirect('core:login')  # Redireciona para a página de login.
 
