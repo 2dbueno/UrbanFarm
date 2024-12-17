@@ -23,11 +23,17 @@ O projeto requer a seguinte configuração para ser executado:
 - Microsoft SQL Server 2022
 - Ambiente virtual configurado para instalar as dependências
 
+## 🏆 **Nota da Banca de Apresentação**
+A nota obtida na banca de apresentação foi: **9.0** com apontamentos pontuais na estrutura da documentação.
+
 ### 🚀 **Atualizações Futuras**
 Este README será atualizado conforme o projeto evolui e novas funcionalidades são implementadas. Fique atento para mais informações e melhorias no sistema!
 
 ### 🤝 **Contribuição**
 Sugestões e colaborações são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests para aprimorar o Urban Farm.
+
+### 📄 **Video de demonstração de funcionamento**
+https://github.com/user-attachments/assets/3258ba48-b2d9-4ea8-bfcb-772a9209425b
 
 ### 📄 **Licença**
 Este projeto é de código aberto e está licenciado sob os termos da MIT License.
